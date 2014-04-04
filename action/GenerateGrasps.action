@@ -1,0 +1,9 @@
+#goal
+geometry_msgs/Pose pose
+float64 width
+---
+#result
+moveit_msgs/Grasp[] grasps
+---
+#feedback
+moveit_msgs/Grasp[] grasps
