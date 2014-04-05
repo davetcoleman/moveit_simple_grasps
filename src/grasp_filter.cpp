@@ -39,7 +39,7 @@ namespace moveit_simple_grasps
 
 // Constructor
 GraspFilter::GraspFilter( const std::string& base_link, bool rviz_verbose,
-                          moveit_visualization_tools::VisualizationToolsPtr rviz_tools, const std::string& planning_group ):
+                          moveit_visual_tools::VisualizationToolsPtr rviz_tools, const std::string& planning_group ):
   base_link_(base_link),
   planning_group_(planning_group),
   rviz_verbose_(rviz_verbose),

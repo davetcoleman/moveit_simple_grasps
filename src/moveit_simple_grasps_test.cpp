@@ -62,7 +62,7 @@ private:
   moveit_simple_grasps::MoveItSimpleGraspsPtr moveit_simple_grasps_;
 
   // class for publishing stuff to rviz
-  moveit_visualization_tools::VisualizationToolsPtr visual_tools_;
+  moveit_visual_tools::VisualizationToolsPtr visual_tools_;
 
   // robot-specific data for generating grasps
   moveit_simple_grasps::RobotGraspData grasp_data_;
@@ -81,11 +81,11 @@ public:
   {
     // ---------------------------------------------------------------------------------------------
     // Load grasp data specific to our robot
-    grasp_data_ = baxter_pick_place::loadRobotGraspData(arm_, OBJECT_SIZE); // Load robot specific data
+    grasp_data_ = baxter_pick_place::loadRobotGraspData(arm_); // Load robot specific data
 
     // ---------------------------------------------------------------------------------------------
     // Load the Robot Viz Tools for publishing to Rviz
-    visual_tools_.reset(new moveit_visualization_tools::VisualizationTools(baxter_pick_place::BASE_LINK));
+    visual_tools_.reset(new moveit_visual_tools::VisualizationTools(baxter_pick_place::BASE_LINK));
     visual_tools_->setLifetime(120.0);
     visual_tools_->setMuted(false);
     visual_tools_->setEEGroupName(grasp_data_.ee_group_);

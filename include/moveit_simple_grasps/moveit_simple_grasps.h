@@ -50,7 +50,7 @@
 #include <eigen_conversions/eigen_msg.h>
 
 // Rviz
-#include <moveit_visualization_tools/visualization_tools.h>
+#include <moveit_visual_tools/visualization_tools.h>
 
 // C++
 #include <math.h>
@@ -97,7 +97,7 @@ private:
   enum grasp_direction_t {UP, DOWN};
 
   // class for publishing stuff to rviz
-  moveit_visualization_tools::VisualizationToolsPtr rviz_tools_;
+  moveit_visual_tools::VisualizationToolsPtr rviz_tools_;
 
   // Transform from frame of box to global frame
   Eigen::Affine3d object_global_transform_; 
@@ -109,7 +109,7 @@ public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW // Eigen requires 128-bit alignment for the Eigen::Vector2d's array (of 2 doubles). With GCC, this is done with a attribute ((aligned(16))).
 
   // Constructor
-  MoveItSimpleGrasps(moveit_visualization_tools::VisualizationToolsPtr rviz_tools);
+  MoveItSimpleGrasps(moveit_visual_tools::VisualizationToolsPtr rviz_tools);
 
   // Destructor
   ~MoveItSimpleGrasps();

@@ -52,7 +52,7 @@ static const double FINGER_JOINT_LOWER = -0.0125; //close
 // robot dimensions
 static const double FLOOR_TO_BASE_HEIGHT = -0.9;
 
-moveit_simple_grasps::RobotGraspData loadRobotGraspData(const std::string& arm, double object_size)
+moveit_simple_grasps::RobotGraspData loadRobotGraspData(const std::string& arm)
 {
   moveit_simple_grasps::RobotGraspData grasp_data;
 
@@ -108,7 +108,7 @@ moveit_simple_grasps::RobotGraspData loadRobotGraspData(const std::string& arm, 
   // distance from center point of object to end effector
   grasp_data.grasp_depth_ = 0.12; // 0.06
 
-  grasp_data.object_size_ = object_size;
+  //grasp_data.object_size_ = object_size;
 
   // generate grasps at PI/angle_resolution increments
   grasp_data.angle_resolution_ = 16;

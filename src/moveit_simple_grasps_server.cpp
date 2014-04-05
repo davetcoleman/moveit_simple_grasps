@@ -68,7 +68,7 @@ namespace moveit_simple_grasps
     moveit_simple_grasps::MoveItSimpleGraspsPtr moveit_simple_grasps_;
 
     // class for publishing stuff to rviz
-    moveit_visualization_tools::VisualizationToolsPtr visual_tools_;
+    moveit_visual_tools::VisualizationToolsPtr visual_tools_;
 
     // robot-specific data for generating grasps
     moveit_simple_grasps::RobotGraspData grasp_data_;
@@ -92,7 +92,7 @@ namespace moveit_simple_grasps
 
       // ---------------------------------------------------------------------------------------------
       // Load the Robot Viz Tools for publishing to Rviz
-      visual_tools_.reset(new moveit_visualization_tools::VisualizationTools(reem_pick_place::BASE_LINK));
+      visual_tools_.reset(new moveit_visual_tools::VisualizationTools(reem_pick_place::BASE_LINK));
       visual_tools_->setLifetime(120.0);
       visual_tools_->setMuted(false);
       visual_tools_->setEEGroupName(grasp_data_.ee_group_);

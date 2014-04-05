@@ -38,7 +38,7 @@ namespace moveit_simple_grasps
 {
 
 // Constructor
-MoveItSimpleGrasps::MoveItSimpleGrasps(moveit_visualization_tools::VisualizationToolsPtr rviz_tools) :
+MoveItSimpleGrasps::MoveItSimpleGrasps(moveit_visual_tools::VisualizationToolsPtr rviz_tools) :
   rviz_tools_(rviz_tools),
   animate_(false)
 {
@@ -187,7 +187,7 @@ bool MoveItSimpleGrasps::generateAxisGrasps(std::vector<moveit_msgs::Grasp>& pos
     if( true )
     {
       tf::poseEigenToMsg(object_global_transform_ * grasp_pose, grasp_pose_msg.pose);
-      rviz_tools_->publishArrow(grasp_pose_msg.pose, moveit_visualization_tools::GREEN);
+      rviz_tools_->publishArrow(grasp_pose_msg.pose, moveit_visual_tools::GREEN);
     }
 
     // ------------------------------------------------------------------------
