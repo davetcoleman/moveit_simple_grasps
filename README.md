@@ -7,6 +7,8 @@ Generate basic grasp poses for simple objects such as blocks or cylinders for us
 
 This is research code by [Dave Coleman](http://davetcoleman.com) at the Correll Robotics Lab. 
 
+<img align="right" src="https://raw.github.com/davetcoleman/moveit_visual_tools/hydro-devel/resources/demo.png" />
+
 ## Install
 
 NEW: This package now depends on [moveit_visual_tools](https://github.com/davetcoleman/moveit_visual_tools)
