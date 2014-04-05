@@ -43,7 +43,7 @@
 #include <actionlib/server/simple_action_server.h>
 
 // Grasp generation
-#include <moveit_simple_grasps/moveit_simple_grasps.h>
+#include <moveit_simple_grasps/simple_grasps.h>
 #include <moveit_simple_grasps/GenerateGraspsAction.h>
 
 
@@ -65,10 +65,10 @@ namespace moveit_simple_grasps
     moveit_simple_grasps::GenerateGraspsResult result_;
 
     // Grasp generator
-    moveit_simple_grasps::MoveItSimpleGraspsPtr moveit_simple_grasps_;
+    moveit_simple_grasps::SimpleGraspsPtr simple_grasps_;
 
     // class for publishing stuff to rviz
-    moveit_visual_tools::VisualizationToolsPtr visual_tools_;
+    moveit_visual_tools::VisualToolsPtr visual_tools_;
 
     // robot-specific data for generating grasps
     moveit_simple_grasps::RobotGraspData grasp_data_;
@@ -92,7 +92,7 @@ namespace moveit_simple_grasps
 
       // ---------------------------------------------------------------------------------------------
       // Load the Robot Viz Tools for publishing to Rviz
-      visual_tools_.reset(new moveit_visual_tools::VisualizationTools(reem_pick_place::BASE_LINK));
+      visual_tools_.reset(new moveit_visual_tools::VisualTools(reem_pick_place::BASE_LINK));
       visual_tools_->setLifetime(120.0);
       visual_tools_->setMuted(false);
       visual_tools_->setEEGroupName(grasp_data_.ee_group_);
@@ -100,7 +100,7 @@ namespace moveit_simple_grasps
 
       // ---------------------------------------------------------------------------------------------
       // Load grasp generator
-      moveit_simple_grasps_.reset( new moveit_simple_grasps::MoveItSimpleGrasps(visual_tools_) );
+      simple_grasps_.reset( new moveit_simple_grasps::SimpleGrasps(visual_tools_) );
       as_.start();
     }
 
@@ -113,7 +113,7 @@ namespace moveit_simple_grasps
       // ---------------------------------------------------------------------------------------------
       // Set object width and generate grasps
       grasp_data_.object_size_ = goal->width;
-      moveit_simple_grasps_->generateAllGrasps(goal->pose, grasp_data_, result_.grasps);
+      simple_grasps_->generateAllGrasps(goal->pose, grasp_data_, result_.grasps);
 
       // ---------------------------------------------------------------------------------------------
       // Publish results

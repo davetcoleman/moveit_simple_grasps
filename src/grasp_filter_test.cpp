@@ -57,9 +57,9 @@
 #include <visualization_msgs/MarkerArray.h>
 
 // Grasp 
-#include <moveit_simple_grasps/moveit_simple_grasps.h>
+#include <moveit_simple_grasps/simple_grasps.h>
 #include <moveit_simple_grasps/grasp_filter.h>
-#include <moveit_simple_grasps/visualization_tools.h>
+#include <moveit_simple_grasps/visual_tools.h>
 
 // Baxter specific properties
 #include <moveit_simple_grasps/baxter_data.h>
@@ -92,10 +92,10 @@ private:
   ros::NodeHandle nh_;
 
   // Grasp generator
-  moveit_simple_grasps::MoveItSimpleGraspsPtr moveit_simple_grasps_;
+  moveit_simple_grasps::SimpleGraspsPtr simple_grasps_;
 
   // class for publishing stuff to rviz
-  moveit_simple_grasps::VisualizationToolsPtr visual_tools_;
+  moveit_simple_grasps::VisualToolsPtr visual_tools_;
 
   // class for filter object
   moveit_simple_grasps::GraspFilterPtr grasp_filter_;
@@ -118,7 +118,7 @@ public:
 
     // ---------------------------------------------------------------------------------------------
     // Load the Robot Viz Tools for publishing to Rviz
-    visual_tools_.reset(new moveit_simple_grasps::VisualizationTools(baxter_pick_place::BASE_LINK));
+    visual_tools_.reset(new moveit_simple_grasps::VisualTools(baxter_pick_place::BASE_LINK));
     visual_tools_->setLifetime(40.0);
     visual_tools_->setMuted(false);
     visual_tools_->setEEGroupName(grasp_data_.ee_group_);
@@ -127,7 +127,7 @@ public:
     // ---------------------------------------------------------------------------------------------
     // Load grasp generator
     grasp_data_ = baxter_pick_place::loadRobotGraspData(arm_, OBJECT_SIZE); // Load robot specific data
-    moveit_simple_grasps_.reset( new moveit_simple_grasps::MoveItSimpleGrasps(visual_tools_) );
+    simple_grasps_.reset( new moveit_simple_grasps::SimpleGrasps(visual_tools_) );
 
     // ---------------------------------------------------------------------------------------------
     // Load grasp filter
@@ -154,14 +154,14 @@ public:
 
       // Generate set of grasps for one object
       //visual_tools_->setMuted(true); // we don't want to see unfiltered grasps
-      moveit_simple_grasps_->generateGrasps( object_pose, grasp_data_, possible_grasps);
+      simple_grasps_->generateGrasps( object_pose, grasp_data_, possible_grasps);
       visual_tools_->setMuted(false);
 
       // Filter the grasp for only the ones that are reachable
       grasp_filter_->filterGrasps(possible_grasps);
 
       // Visualize them
-      moveit_simple_grasps_->visualizeGrasps(possible_grasps, object_pose, grasp_data_);
+      simple_grasps_->visualizeGrasps(possible_grasps, object_pose, grasp_data_);
 
       // Make sure ros is still going
       if(!ros::ok())

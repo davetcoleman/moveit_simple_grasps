@@ -1,11 +1,11 @@
-moveit_simple_grasps
+simple_grasps
 ====================
 
 Note: this code is mostly moved from [block_grasp_generator](https://github.com/davetcoleman/block_grasp_generator)
 
 Generate basic grasp poses for simple objects such as blocks or cylinders for use with MoveIt! pick and place
 
-This is research code by [Dave Coleman](http://davetcoleman.com) at the Correll Robotics Lab. 
+Research code by [Dave Coleman](http://dav.ee) at the Correll Robotics Lab, University of Colorado Boulder
 
 <img align="right" src="https://raw.github.com/davetcoleman/moveit_visual_tools/hydro-devel/resources/demo.png" />
 
@@ -21,7 +21,7 @@ NEW: This package now depends on [moveit_visual_tools](https://github.com/davetc
 
 ## Build Status
 
-[![Build Status](https://travis-ci.org/davetcoleman/moveit_simple_grasps.png?branch=hydro-devel)](https://travis-ci.org/davetcoleman/moveit_simple_grasps)
+[![Build Status](https://travis-ci.org/davetcoleman/simple_grasps.png?branch=hydro-devel)](https://travis-ci.org/davetcoleman/simple_grasps)
 
 ## Testing and Example Code
 

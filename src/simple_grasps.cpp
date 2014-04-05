@@ -32,13 +32,13 @@
  *  POSSIBILITY OF SUCH DAMAGE.
  *********************************************************************/
 
-#include <moveit_simple_grasps/moveit_simple_grasps.h>
+#include <moveit_simple_grasps/simple_grasps.h>
 
 namespace moveit_simple_grasps
 {
 
 // Constructor
-MoveItSimpleGrasps::MoveItSimpleGrasps(moveit_visual_tools::VisualizationToolsPtr rviz_tools) :
+SimpleGrasps::SimpleGrasps(moveit_visual_tools::VisualToolsPtr rviz_tools) :
   rviz_tools_(rviz_tools),
   animate_(false),
   animation_speed_(0.01)
@@ -46,12 +46,12 @@ MoveItSimpleGrasps::MoveItSimpleGrasps(moveit_visual_tools::VisualizationToolsPt
 }
 
 // Deconstructor
-MoveItSimpleGrasps::~MoveItSimpleGrasps()
+SimpleGrasps::~SimpleGrasps()
 {
 }
 
 // Create all possible grasp positions for a object
-bool MoveItSimpleGrasps::generateAllGrasps(const geometry_msgs::Pose& object_pose, const RobotGraspData& grasp_data,
+bool SimpleGrasps::generateAllGrasps(const geometry_msgs::Pose& object_pose, const RobotGraspData& grasp_data,
   std::vector<moveit_msgs::Grasp>& possible_grasps)
 {
   // ---------------------------------------------------------------------------------------------
@@ -65,7 +65,7 @@ bool MoveItSimpleGrasps::generateAllGrasps(const geometry_msgs::Pose& object_pos
 }
 
 // Create grasp positions in one axis
-bool MoveItSimpleGrasps::generateAxisGrasps(
+bool SimpleGrasps::generateAxisGrasps(
   const geometry_msgs::Pose& object_pose,
   grasp_axis_t axis,
   grasp_direction_t direction, 
@@ -207,6 +207,11 @@ bool MoveItSimpleGrasps::generateAxisGrasps(
     // Transform the grasp pose
     grasp_pose = grasp_pose * eef_conversion_pose;
 
+    // TEMP transform the pose to rotate along x axis
+    Eigen::Affine3d rotate_gripper;
+    rotate_gripper = Eigen::AngleAxisd(M_PI / 2, Eigen::Vector3d::UnitX());
+    grasp_pose = grasp_pose * rotate_gripper;
+
     // ------------------------------------------------------------------------
     // Convert pose to global frame (base_link)
     tf::poseEigenToMsg(object_global_transform_ * grasp_pose, grasp_pose_msg.pose);
@@ -276,7 +281,7 @@ bool MoveItSimpleGrasps::generateAxisGrasps(
 }
 
 // Show all grasps in Rviz
-void MoveItSimpleGrasps::visualizeGrasps(const std::vector<moveit_msgs::Grasp>& possible_grasps,
+void SimpleGrasps::visualizeGrasps(const std::vector<moveit_msgs::Grasp>& possible_grasps,
   const geometry_msgs::Pose& object_pose, const RobotGraspData& grasp_data)
 {
   if(rviz_tools_->isMuted())
@@ -326,7 +331,7 @@ void MoveItSimpleGrasps::visualizeGrasps(const std::vector<moveit_msgs::Grasp>& 
   }
 }
 
-void MoveItSimpleGrasps::animateGrasp(const moveit_msgs::Grasp &grasp, const RobotGraspData& grasp_data)
+void SimpleGrasps::animateGrasp(const moveit_msgs::Grasp &grasp, const RobotGraspData& grasp_data)
 {
   // Grasp Pose Variables
   geometry_msgs::Pose grasp_pose = grasp.grasp_pose.pose;

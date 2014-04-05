@@ -36,7 +36,7 @@
    Desc:   Parameters specific to REEM for performing pick-place
 */
 
-#include <moveit_simple_grasps/moveit_simple_grasps.h> // has datastructure
+#include <moveit_simple_grasps/simple_grasps.h> // has datastructure
 
 namespace reem_pick_place
 {
@@ -127,7 +127,7 @@ moveit_simple_grasps::RobotGraspData loadRobotGraspData(const std::string& side)
   grasp_data.angle_resolution_ = 16;
 
   // Debug
-  //moveit_simple_grasps::MoveItSimpleGrasps::printObjectGraspData(grasp_data);
+  //moveit_simple_grasps::SimpleGrasps::printObjectGraspData(grasp_data);
 
   return grasp_data;
 }

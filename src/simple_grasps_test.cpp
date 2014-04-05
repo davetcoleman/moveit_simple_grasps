@@ -43,7 +43,7 @@
 #include <Eigen/Geometry>
 
 // Grasp generation
-#include <moveit_simple_grasps/moveit_simple_grasps.h>
+#include <moveit_simple_grasps/simple_grasps.h>
 
 // Baxter specific properties
 #include <moveit_simple_grasps/baxter_data.h>
@@ -59,10 +59,10 @@ private:
   ros::NodeHandle nh_;
 
   // Grasp generator
-  moveit_simple_grasps::MoveItSimpleGraspsPtr moveit_simple_grasps_;
+  moveit_simple_grasps::SimpleGraspsPtr simple_grasps_;
 
   // class for publishing stuff to rviz
-  moveit_visual_tools::VisualizationToolsPtr visual_tools_;
+  moveit_visual_tools::VisualToolsPtr visual_tools_;
 
   // robot-specific data for generating grasps
   moveit_simple_grasps::RobotGraspData grasp_data_;
@@ -85,7 +85,7 @@ public:
 
     // ---------------------------------------------------------------------------------------------
     // Load the Robot Viz Tools for publishing to Rviz
-    visual_tools_.reset(new moveit_visual_tools::VisualizationTools(baxter_pick_place::BASE_LINK));
+    visual_tools_.reset(new moveit_visual_tools::VisualTools(baxter_pick_place::BASE_LINK));
     visual_tools_->setLifetime(120.0);
     visual_tools_->setMuted(false);
     visual_tools_->setEEGroupName(grasp_data_.ee_group_);
@@ -93,7 +93,7 @@ public:
 
     // ---------------------------------------------------------------------------------------------
     // Load grasp generator
-    moveit_simple_grasps_.reset( new moveit_simple_grasps::MoveItSimpleGrasps(visual_tools_) );
+    simple_grasps_.reset( new moveit_simple_grasps::SimpleGrasps(visual_tools_) );
 
     // ---------------------------------------------------------------------------------------------
     // Generate grasps for a bunch of random objects
@@ -113,9 +113,9 @@ public:
       generateTestObject(object_pose);
 
       possible_grasps.clear();
-      moveit_simple_grasps_->generateAxisGrasps( object_pose, moveit_simple_grasps::X_AXIS, moveit_simple_grasps::UP, 
+      simple_grasps_->generateAxisGrasps( object_pose, moveit_simple_grasps::X_AXIS, moveit_simple_grasps::UP, 
         moveit_simple_grasps::FULL, grasp_data_, possible_grasps);
-      moveit_simple_grasps_->generateAxisGrasps( object_pose, moveit_simple_grasps::X_AXIS, moveit_simple_grasps::DOWN, 
+      simple_grasps_->generateAxisGrasps( object_pose, moveit_simple_grasps::X_AXIS, moveit_simple_grasps::DOWN, 
         moveit_simple_grasps::FULL, grasp_data_, possible_grasps);
 
       // Test if done

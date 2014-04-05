@@ -50,7 +50,7 @@
 #include <eigen_conversions/eigen_msg.h>
 
 // Rviz
-#include <moveit_visual_tools/visualization_tools.h>
+#include <moveit_visual_tools/visual_tools.h>
 
 // C++
 #include <math.h>
@@ -93,12 +93,12 @@ enum grasp_rotation_t {FULL, HALF};
 
 
 // Class
-class MoveItSimpleGrasps
+class SimpleGrasps
 {
 private:
 
   // class for publishing stuff to rviz
-  moveit_visual_tools::VisualizationToolsPtr rviz_tools_;
+  moveit_visual_tools::VisualToolsPtr rviz_tools_;
 
   // Transform from frame of box to global frame
   Eigen::Affine3d object_global_transform_;
@@ -111,10 +111,10 @@ public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW // Eigen requires 128-bit alignment for the Eigen::Vector2d's array (of 2 doubles). With GCC, this is done with a attribute ((aligned(16))).
 
   // Constructor
-  MoveItSimpleGrasps(moveit_visual_tools::VisualizationToolsPtr rviz_tools);
+  SimpleGrasps(moveit_visual_tools::VisualToolsPtr rviz_tools);
 
   // Destructor
-  ~MoveItSimpleGrasps();
+  ~SimpleGrasps();
 
   /**
    * \brief Choose whether the end effector is animated and shown for each potential grasp
@@ -137,7 +137,17 @@ public:
   bool generateAllGrasps(const geometry_msgs::Pose& object_pose, const RobotGraspData& grasp_data,
     std::vector<moveit_msgs::Grasp>& possible_grasps);
 
-  // Create grasp positions in one axis
+  /**
+   * \brief Create grasp positions in one axis around a single pose
+   * \param pose - center point of object to be grasped
+   * \param axis - axis relative to object pose to rotate generated grasps around
+   * \param direction - a parallel gripper is typically symetric such that it can perform the same grasp 
+   *                    180 degree around. this option allows to generate a flipped grasp pose
+   * \param rotation - amount to rotate around the object - 180 or 360 degrees
+   * \param grasp_data - parameters specific to the robot geometry
+   * \param possible_grasps - the output solution vector of possible grasps to attempt. ok if pre-populated
+   * \return true if successful
+   */
   bool generateAxisGrasps(
     const geometry_msgs::Pose& object_pose,
     grasp_axis_t axis,
@@ -177,8 +187,8 @@ public:
 
 }; // end of class
 
-typedef boost::shared_ptr<MoveItSimpleGrasps> MoveItSimpleGraspsPtr;
-typedef boost::shared_ptr<const MoveItSimpleGrasps> GraspGeneratorConstPtr;
+typedef boost::shared_ptr<SimpleGrasps> SimpleGraspsPtr;
+typedef boost::shared_ptr<const SimpleGrasps> GraspGeneratorConstPtr;
 
 } // namespace
 

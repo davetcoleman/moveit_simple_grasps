@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(moveit_simple_grasps)
+project(simple_grasps)
 
 find_package(Eigen REQUIRED)
 find_package(Boost REQUIRED thread system)
@@ -54,7 +54,7 @@ include_directories(
 
 # Grasp Generator Library
 add_library(${PROJECT_NAME}
-  src/moveit_simple_grasps.cpp
+  src/simple_grasps.cpp
 )
 target_link_libraries(${PROJECT_NAME} 
   ${catkin_LIBRARIES} ${Boost_LIBRARIES}
@@ -69,13 +69,13 @@ target_link_libraries(${PROJECT_NAME}_filter
 )
 
 # Test executable
-add_executable(${PROJECT_NAME}_server src/moveit_simple_grasps_server.cpp)
+add_executable(${PROJECT_NAME}_server src/simple_grasps_server.cpp)
 target_link_libraries(${PROJECT_NAME}_server
   ${PROJECT_NAME} ${catkin_LIBRARIES} ${Boost_LIBRARIES}
 )
 
 # Test executable
-add_executable(${PROJECT_NAME}_test src/moveit_simple_grasps_test.cpp)
+add_executable(${PROJECT_NAME}_test src/simple_grasps_test.cpp)
 target_link_libraries(${PROJECT_NAME}_test 
   ${PROJECT_NAME} ${catkin_LIBRARIES} ${Boost_LIBRARIES}
 )
