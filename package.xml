@@ -1,12 +1,12 @@
 <package>
-  <name>simple_grasps</name>
+  <name>moveit_simple_grasps</name>
   <version>1.0.0</version>
-  <description>simple_grasps generates grasps for picking up simple objects</description>
+  <description>moveit_simple_grasps generates grasps for picking up simple objects</description>
   <maintainer email="davetcoleman@gmail.com">Dave Coleman</maintainer>
 
   <license>BSD</license>
 
-  <url type="website">http://correll.cs.colorado.edu/simple_grasps/</url>
+  <url type="website">https://github.com/davetcoleman/simple_grasps/</url>
   <url type="bugtracker">https://github.com/davetcoleman/simple_grasps/issues</url>
   <url type="repository">https://github.com/davetcoleman/simple_grasps</url>
 

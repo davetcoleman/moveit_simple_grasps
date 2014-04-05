@@ -197,6 +197,11 @@ bool SimpleGrasps::generateAxisGrasps(
       rviz_tools_->publishArrow(grasp_pose_msg.pose, moveit_visual_tools::GREEN);
     }
 
+    // TEMP transform the pose to rotate along x axis
+    Eigen::Affine3d rotate_gripper;
+    rotate_gripper = Eigen::AngleAxisd(M_PI / 2, Eigen::Vector3d::UnitX());
+    grasp_pose = grasp_pose * rotate_gripper;
+
     // ------------------------------------------------------------------------
     // Change grasp to frame of reference of this custom end effector
 
@@ -206,11 +211,6 @@ bool SimpleGrasps::generateAxisGrasps(
 
     // Transform the grasp pose
     grasp_pose = grasp_pose * eef_conversion_pose;
-
-    // TEMP transform the pose to rotate along x axis
-    Eigen::Affine3d rotate_gripper;
-    rotate_gripper = Eigen::AngleAxisd(M_PI / 2, Eigen::Vector3d::UnitX());
-    grasp_pose = grasp_pose * rotate_gripper;
 
     // ------------------------------------------------------------------------
     // Convert pose to global frame (base_link)

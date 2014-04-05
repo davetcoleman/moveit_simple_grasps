@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(simple_grasps)
+project(moveit_simple_grasps)
 
 find_package(Eigen REQUIRED)
 find_package(Boost REQUIRED thread system)
@@ -28,7 +28,11 @@ add_action_files(DIRECTORY action FILES
 )
 
 generate_messages(DEPENDENCIES
-  geometry_msgs actionlib_msgs std_msgs moveit_msgs)
+  geometry_msgs 
+  actionlib_msgs 
+  std_msgs 
+  moveit_msgs
+)
 
 # Catkin
 catkin_package(
@@ -70,6 +74,7 @@ target_link_libraries(${PROJECT_NAME}_filter
 
 # Test executable
 add_executable(${PROJECT_NAME}_server src/simple_grasps_server.cpp)
+add_dependencies(${PROJECT_NAME}_server ${catkin_EXPORTED_TARGETS}) # don't build until necessary msgs are finish
 target_link_libraries(${PROJECT_NAME}_server
   ${PROJECT_NAME} ${catkin_LIBRARIES} ${Boost_LIBRARIES}
 )
