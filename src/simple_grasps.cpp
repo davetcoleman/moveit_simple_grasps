@@ -56,10 +56,10 @@ bool SimpleGrasps::generateAllGrasps(const geometry_msgs::Pose& object_pose, con
 {
   // ---------------------------------------------------------------------------------------------
   // Calculate grasps in two axis in both directions
-  generateAxisGrasps( object_pose, X_AXIS, DOWN, HALF, grasp_data, possible_grasps); // got no grasps with this alone
-  generateAxisGrasps( object_pose, X_AXIS, UP,   HALF, grasp_data, possible_grasps); // gives some grasps... looks ugly
-  generateAxisGrasps( object_pose, Y_AXIS, DOWN, HALF, grasp_data, possible_grasps); // GOOD ONES!
-  generateAxisGrasps( object_pose, Y_AXIS, UP,   HALF, grasp_data, possible_grasps); // gave a grasp from top... bad
+  generateAxisGrasps( object_pose, X_AXIS, DOWN, HALF, 0, grasp_data, possible_grasps); // got no grasps with this alone
+  generateAxisGrasps( object_pose, X_AXIS, UP,   HALF, 0, grasp_data, possible_grasps); // gives some grasps... looks ugly
+  generateAxisGrasps( object_pose, Y_AXIS, DOWN, HALF, 0, grasp_data, possible_grasps); // GOOD ONES!
+  generateAxisGrasps( object_pose, Y_AXIS, UP,   HALF, 0, grasp_data, possible_grasps); // gave a grasp from top... bad
 
   return true;
 }
@@ -70,6 +70,7 @@ bool SimpleGrasps::generateAxisGrasps(
   grasp_axis_t axis,
   grasp_direction_t direction, 
   grasp_rotation_t rotation,
+  double hand_roll,
   const RobotGraspData& grasp_data,
   std::vector<moveit_msgs::Grasp>& possible_grasps)
 {
@@ -171,7 +172,6 @@ bool SimpleGrasps::generateAxisGrasps(
     else
     {
       theta1 += 2*M_PI / grasp_data.angle_resolution_;
-      ROS_WARN_STREAM_NAMED("temp","rotation is FULL - theta1 is " << theta1 << " i is " << i);
     }
 
     // A name for this grasp
@@ -197,10 +197,11 @@ bool SimpleGrasps::generateAxisGrasps(
       rviz_tools_->publishArrow(grasp_pose_msg.pose, moveit_visual_tools::GREEN);
     }
 
-    // TEMP transform the pose to rotate along x axis
-    Eigen::Affine3d rotate_gripper;
-    rotate_gripper = Eigen::AngleAxisd(M_PI / 2, Eigen::Vector3d::UnitX());
-    grasp_pose = grasp_pose * rotate_gripper;
+    // ------------------------------------------------------------------------
+    // Optionally roll wrist with respect to object pose
+    Eigen::Affine3d roll_gripper;
+    roll_gripper = Eigen::AngleAxisd(hand_roll, Eigen::Vector3d::UnitX());
+    grasp_pose = grasp_pose * roll_gripper;
 
     // ------------------------------------------------------------------------
     // Change grasp to frame of reference of this custom end effector

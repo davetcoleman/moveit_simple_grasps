@@ -91,7 +91,6 @@ enum grasp_axis_t {X_AXIS, Y_AXIS, Z_AXIS};
 enum grasp_direction_t {UP, DOWN};
 enum grasp_rotation_t {FULL, HALF};
 
-
 // Class
 class SimpleGrasps
 {
@@ -144,6 +143,7 @@ public:
    * \param direction - a parallel gripper is typically symetric such that it can perform the same grasp 
    *                    180 degree around. this option allows to generate a flipped grasp pose
    * \param rotation - amount to rotate around the object - 180 or 360 degrees
+   * \param hand_roll - amount in radians to roll wrist with respect to center point of object during grasp. use 0 by default
    * \param grasp_data - parameters specific to the robot geometry
    * \param possible_grasps - the output solution vector of possible grasps to attempt. ok if pre-populated
    * \return true if successful
@@ -153,6 +153,7 @@ public:
     grasp_axis_t axis,
     grasp_direction_t direction,
     grasp_rotation_t rotation,
+    double hand_roll,
     const RobotGraspData& grasp_data,
     std::vector<moveit_msgs::Grasp>& possible_grasps);
 

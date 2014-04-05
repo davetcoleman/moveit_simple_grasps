@@ -111,12 +111,13 @@ public:
 
       //generateRandomObject(object_pose);
       generateTestObject(object_pose);
+      double wrist_roll = 0;
 
       possible_grasps.clear();
       simple_grasps_->generateAxisGrasps( object_pose, moveit_simple_grasps::X_AXIS, moveit_simple_grasps::UP, 
-        moveit_simple_grasps::FULL, grasp_data_, possible_grasps);
+        moveit_simple_grasps::FULL, wrist_roll, grasp_data_, possible_grasps);
       simple_grasps_->generateAxisGrasps( object_pose, moveit_simple_grasps::X_AXIS, moveit_simple_grasps::DOWN, 
-        moveit_simple_grasps::FULL, grasp_data_, possible_grasps);
+        moveit_simple_grasps::FULL, wrist_roll, grasp_data_, possible_grasps);
 
       // Test if done
       ++i;
