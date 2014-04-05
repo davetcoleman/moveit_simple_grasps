@@ -40,7 +40,8 @@ namespace moveit_simple_grasps
 // Constructor
 MoveItSimpleGrasps::MoveItSimpleGrasps(moveit_visual_tools::VisualizationToolsPtr rviz_tools) :
   rviz_tools_(rviz_tools),
-  animate_(false)
+  animate_(false),
+  animation_speed_(0.01)
 {
 }
 
@@ -50,31 +51,31 @@ MoveItSimpleGrasps::~MoveItSimpleGrasps()
 }
 
 // Create all possible grasp positions for a object
-bool MoveItSimpleGrasps::generateGrasps(const geometry_msgs::Pose& object_pose, const RobotGraspData& grasp_data,
+bool MoveItSimpleGrasps::generateAllGrasps(const geometry_msgs::Pose& object_pose, const RobotGraspData& grasp_data,
   std::vector<moveit_msgs::Grasp>& possible_grasps)
 {
   // ---------------------------------------------------------------------------------------------
-  // Create a transform from the object's frame (center of object) to /base_link
-  tf::poseMsgToEigen(object_pose, object_global_transform_);
-
-  // ---------------------------------------------------------------------------------------------
   // Calculate grasps in two axis in both directions
-  generateAxisGrasps( possible_grasps, X_AXIS, DOWN, grasp_data); // got no grasps with this alone
-  generateAxisGrasps( possible_grasps, X_AXIS, UP,   grasp_data); // gives some grasps... looks ugly
-  generateAxisGrasps( possible_grasps, Y_AXIS, DOWN, grasp_data); // GOOD ONES!
-  generateAxisGrasps( possible_grasps, Y_AXIS, UP,   grasp_data); // gave a grasp from top... bad
-  ROS_INFO_STREAM_NAMED("grasp", "Generated " << possible_grasps.size() << " grasps." );
-
-  // Visualize results
-  visualizeGrasps(possible_grasps, object_pose, grasp_data);
+  generateAxisGrasps( object_pose, X_AXIS, DOWN, HALF, grasp_data, possible_grasps); // got no grasps with this alone
+  generateAxisGrasps( object_pose, X_AXIS, UP,   HALF, grasp_data, possible_grasps); // gives some grasps... looks ugly
+  generateAxisGrasps( object_pose, Y_AXIS, DOWN, HALF, grasp_data, possible_grasps); // GOOD ONES!
+  generateAxisGrasps( object_pose, Y_AXIS, UP,   HALF, grasp_data, possible_grasps); // gave a grasp from top... bad
 
   return true;
 }
 
 // Create grasp positions in one axis
-bool MoveItSimpleGrasps::generateAxisGrasps(std::vector<moveit_msgs::Grasp>& possible_grasps, grasp_axis_t axis,
-  grasp_direction_t direction, const RobotGraspData& grasp_data)
+bool MoveItSimpleGrasps::generateAxisGrasps(
+  const geometry_msgs::Pose& object_pose,
+  grasp_axis_t axis,
+  grasp_direction_t direction, 
+  grasp_rotation_t rotation,
+  const RobotGraspData& grasp_data,
+  std::vector<moveit_msgs::Grasp>& possible_grasps)
 {
+  // ---------------------------------------------------------------------------------------------
+  // Create a transform from the object's frame (center of object) to /base_link
+  tf::poseMsgToEigen(object_pose, object_global_transform_);
 
   // ---------------------------------------------------------------------------------------------
   // Grasp parameters
@@ -165,7 +166,13 @@ bool MoveItSimpleGrasps::generateAxisGrasps(std::vector<moveit_msgs::Grasp>& pos
     new_grasp.grasp_quality = std::max(score,0.1); // don't allow score to drop below 0.1 b/c all grasps are ok
 
     // Calculate the theta1 for next time
-    theta1 += M_PI / grasp_data.angle_resolution_;
+    if (rotation == HALF)
+      theta1 += M_PI / grasp_data.angle_resolution_;
+    else
+    {
+      theta1 += 2*M_PI / grasp_data.angle_resolution_;
+      ROS_WARN_STREAM_NAMED("temp","rotation is FULL - theta1 is " << theta1 << " i is " << i);
+    }
 
     // A name for this grasp
     static int grasp_id = 0;
@@ -259,6 +266,11 @@ bool MoveItSimpleGrasps::generateAxisGrasps(std::vector<moveit_msgs::Grasp>& pos
     possible_grasps.push_back(new_grasp);
 
   }
+
+  ROS_INFO_STREAM_NAMED("grasp", "Generated " << possible_grasps.size() << " grasps." );
+
+  // Visualize results
+  visualizeGrasps(possible_grasps, object_pose, grasp_data);
 
   return true;
 }
@@ -372,7 +384,7 @@ void MoveItSimpleGrasps::animateGrasp(const moveit_msgs::Grasp &grasp, const Rob
     //rviz_tools_->publishArrow(pre_grasp_pose, BLUE);
     rviz_tools_->publishEEMarkers(pre_grasp_pose);
 
-    ros::Duration(0.01).sleep();
+    ros::Duration(animation_speed_).sleep();
   }
 
 }

@@ -113,7 +113,10 @@ public:
       generateTestObject(object_pose);
 
       possible_grasps.clear();
-      moveit_simple_grasps_->generateGrasps( object_pose, grasp_data_, possible_grasps);
+      moveit_simple_grasps_->generateAxisGrasps( object_pose, moveit_simple_grasps::X_AXIS, moveit_simple_grasps::UP, 
+        moveit_simple_grasps::FULL, grasp_data_, possible_grasps);
+      moveit_simple_grasps_->generateAxisGrasps( object_pose, moveit_simple_grasps::X_AXIS, moveit_simple_grasps::DOWN, 
+        moveit_simple_grasps::FULL, grasp_data_, possible_grasps);
 
       // Test if done
       ++i;

@@ -63,10 +63,10 @@ static const double RAD2DEG = 57.2957795;
 
 struct RobotGraspData
 {
-  RobotGraspData() :    
+  RobotGraspData() :
     // Fill in default values where possible:
-    base_link_("/base_link"), 
-    grasp_depth_(0.12), 
+    base_link_("/base_link"),
+    grasp_depth_(0.12),
     angle_resolution_(16),
     approach_retreat_desired_dist_(0.6),
     approach_retreat_min_dist_(0.4),
@@ -86,24 +86,26 @@ struct RobotGraspData
   double object_size_; // for visualization
 };
 
+// Grasp axis orientation
+enum grasp_axis_t {X_AXIS, Y_AXIS, Z_AXIS};
+enum grasp_direction_t {UP, DOWN};
+enum grasp_rotation_t {FULL, HALF};
+
 
 // Class
 class MoveItSimpleGrasps
 {
 private:
 
-  // Grasp axis orientation
-  enum grasp_axis_t {X_AXIS, Y_AXIS, Z_AXIS};
-  enum grasp_direction_t {UP, DOWN};
-
   // class for publishing stuff to rviz
   moveit_visual_tools::VisualizationToolsPtr rviz_tools_;
 
   // Transform from frame of box to global frame
-  Eigen::Affine3d object_global_transform_; 
+  Eigen::Affine3d object_global_transform_;
 
   // Choose whether the end effector is animated and shown for each potential grasp
   bool animate_;
+  double animation_speed_; // seconds to pause between animations
 
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW // Eigen requires 128-bit alignment for the Eigen::Vector2d's array (of 2 doubles). With GCC, this is done with a attribute ((aligned(16))).
@@ -117,22 +119,39 @@ public:
   /**
    * \brief Choose whether the end effector is animated and shown for each potential grasp
             only really useful for debugging
-   */
+  */
   void setAnimateGrasps(bool animate)
   {
     animate_ = animate;
   }
 
+  /**
+   * \brief Speed at which the end effector is animated grasping things
+  */
+  void setAnimationSpeed(double speed)
+  {
+    animation_speed_ = speed;
+  }
+
   // Create all possible grasp positions for a object
-  bool generateGrasps(const geometry_msgs::Pose& object_pose, const RobotGraspData& grasp_data,
-                      std::vector<moveit_msgs::Grasp>& possible_grasps);
+  bool generateAllGrasps(const geometry_msgs::Pose& object_pose, const RobotGraspData& grasp_data,
+    std::vector<moveit_msgs::Grasp>& possible_grasps);
+
+  // Create grasp positions in one axis
+  bool generateAxisGrasps(
+    const geometry_msgs::Pose& object_pose,
+    grasp_axis_t axis,
+    grasp_direction_t direction,
+    grasp_rotation_t rotation,
+    const RobotGraspData& grasp_data,
+    std::vector<moveit_msgs::Grasp>& possible_grasps);
 
   /**
    * \brief Show all grasps in Rviz
    * \param possible_grasps
    * \param object_pose
    * \param grasp_data - custom settings for a robot's geometry
-   */ 
+   */
   void visualizeGrasps(const std::vector<moveit_msgs::Grasp>& possible_grasps,
     const geometry_msgs::Pose& object_pose, const RobotGraspData& grasp_data);
 
@@ -156,12 +175,6 @@ public:
     ROS_INFO_STREAM_NAMED("grasp","---------------------------------------------------\n");
   }
 
-private:
-
-  // Create grasp positions in one axis
-  bool generateAxisGrasps(std::vector<moveit_msgs::Grasp>& possible_grasps, grasp_axis_t axis,
-                          grasp_direction_t direction, const RobotGraspData& grasp_data);
-                          
 }; // end of class
 
 typedef boost::shared_ptr<MoveItSimpleGrasps> MoveItSimpleGraspsPtr;
