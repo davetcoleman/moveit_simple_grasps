@@ -137,31 +137,40 @@ public:
 
     // ---------------------------------------------------------------------------------------------
     // Generate grasps for a bunch of random objects
-
     geometry_msgs::Pose object_pose;
     std::vector<moveit_msgs::Grasp> possible_grasps;
+    std::vector<trajectory_msgs::JointTrajectoryPoint> ik_solutions; // save each grasps ik solution for visualization
 
     // Loop
     for (int i = 0; i < num_tests; ++i)
     {
       ROS_INFO_STREAM_NAMED("test","Adding random object " << i+1 << " of " << num_tests);
 
-      generateRandomBlock(object_pose);
-      //getTestObject(object_pose);
+      // Remove randomness when we are only running one test
+      if (num_tests == 1)
+        getTestBlock(object_pose);
+      else
+        generateRandomBlock(object_pose);
+
+      // Show the block
       visual_tools_->publishBlock(object_pose, moveit_visual_tools::BLUE, BLOCK_SIZE);
 
       possible_grasps.clear();
+      ik_solutions.clear();
 
       // Generate set of grasps for one object
-      //visual_tools_->setMuted(true); // we don't want to see unfiltered grasps
+      visual_tools_->setMuted(true); // we don't want to see unfiltered grasps
       simple_grasps_->generateAllGrasps( object_pose, grasp_data_, possible_grasps);
-      visual_tools_->setMuted(false);
+      //visual_tools_->setMuted(false);
 
       // Filter the grasp for only the ones that are reachable
-      grasp_filter_->filterGrasps(possible_grasps);
+      grasp_filter_->filterGrasps(possible_grasps, ik_solutions);
 
       // Visualize them
-      simple_grasps_->visualizeGrasps(possible_grasps, object_pose, grasp_data_);
+      visual_tools_->setMuted(false);
+      simple_grasps_->setAnimateGrasps(true);
+      ROS_WARN_STREAM_NAMED("temp","before calling visualize grasps");
+      simple_grasps_->visualizeGrasps(possible_grasps, ik_solutions, grasp_data_);
 
       // Make sure ros is still going
       if(!ros::ok())
@@ -207,12 +216,12 @@ public:
   void generateRandomBlock(geometry_msgs::Pose& object_pose)
   {
     // Position
-    object_pose.position.x = fRand(0.7,TABLE_DEPTH);
-    object_pose.position.y = fRand(-TABLE_WIDTH/2,-0.1);
+    object_pose.position.x = dRand(0.7,TABLE_DEPTH);
+    object_pose.position.y = dRand(-TABLE_WIDTH/2,-0.1);
     object_pose.position.z = TABLE_Z + TABLE_HEIGHT / 2.0 + BLOCK_SIZE / 2.0;
   
     // Orientation
-    double angle = M_PI * fRand(0.1,1);
+    double angle = M_PI * dRand(0.1,1);
     Eigen::Quaterniond quat(Eigen::AngleAxis<double>(double(angle), Eigen::Vector3d::UnitZ()));
     object_pose.orientation.x = quat.x();
     object_pose.orientation.y = quat.y();
@@ -223,10 +232,10 @@ public:
   /**
    * \brief Get random double between min and max
    */
-  double fRand(double fMin, double fMax)
+  double dRand(double dMin, double dMax)
   {
-    double f = (double)rand() / RAND_MAX;
-    return fMin + f * (fMax - fMin);
+    double d = (double)rand() / RAND_MAX;
+    return dMin + d * (dMax - dMin);
   }
 
 }; // end of class
@@ -236,12 +245,12 @@ public:
 
 int main(int argc, char *argv[])
 {
-  int num_tests = 10;
+  int num_tests = 1;
 
   ros::init(argc, argv, "grasp_generator_test");
 
   // Allow the action server to recieve and send ros messages
-  ros::AsyncSpinner spinner(5);
+  ros::AsyncSpinner spinner(2);
   spinner.start();
 
   // Seed random
@@ -263,4 +272,3 @@ int main(int argc, char *argv[])
 
   return 0;
 }
-

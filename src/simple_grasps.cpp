@@ -38,8 +38,8 @@ namespace moveit_simple_grasps
 {
 
 // Constructor
-SimpleGrasps::SimpleGrasps(moveit_visual_tools::VisualToolsPtr rviz_tools) :
-  rviz_tools_(rviz_tools),
+SimpleGrasps::SimpleGrasps(moveit_visual_tools::VisualToolsPtr visual_tools) :
+  visual_tools_(visual_tools),
   animate_(false),
   animation_speed_(0.01)
 {
@@ -68,7 +68,7 @@ bool SimpleGrasps::generateAllGrasps(const geometry_msgs::Pose& object_pose, con
 bool SimpleGrasps::generateAxisGrasps(
   const geometry_msgs::Pose& object_pose,
   grasp_axis_t axis,
-  grasp_direction_t direction, 
+  grasp_direction_t direction,
   grasp_rotation_t rotation,
   double hand_roll,
   const RobotGraspData& grasp_data,
@@ -136,27 +136,27 @@ bool SimpleGrasps::generateAxisGrasps(
 
     switch(axis)
     {
-    case X_AXIS:
-      grasp_pose = Eigen::AngleAxisd(theta1, Eigen::Vector3d::UnitX())
-        * Eigen::AngleAxisd(-0.5*M_PI, Eigen::Vector3d::UnitZ())
-        * Eigen::AngleAxisd(theta2, Eigen::Vector3d::UnitX()); // Flip 'direction'
+      case X_AXIS:
+        grasp_pose = Eigen::AngleAxisd(theta1, Eigen::Vector3d::UnitX())
+          * Eigen::AngleAxisd(-0.5*M_PI, Eigen::Vector3d::UnitZ())
+          * Eigen::AngleAxisd(theta2, Eigen::Vector3d::UnitX()); // Flip 'direction'
 
-      grasp_pose.translation() = Eigen::Vector3d( yb, xb ,zb);
+        grasp_pose.translation() = Eigen::Vector3d( yb, xb ,zb);
 
-      break;
-    case Y_AXIS:
-      grasp_pose =
-        Eigen::AngleAxisd(M_PI - theta1, Eigen::Vector3d::UnitY())
-        *Eigen::AngleAxisd(theta2, Eigen::Vector3d::UnitX()); // Flip 'direction'
+        break;
+      case Y_AXIS:
+        grasp_pose =
+          Eigen::AngleAxisd(M_PI - theta1, Eigen::Vector3d::UnitY())
+          *Eigen::AngleAxisd(theta2, Eigen::Vector3d::UnitX()); // Flip 'direction'
 
-      grasp_pose.translation() = Eigen::Vector3d( xb, yb ,zb);
+        grasp_pose.translation() = Eigen::Vector3d( xb, yb ,zb);
 
-      break;
-    case Z_AXIS:
-      ROS_ERROR_STREAM_NAMED("grasp","Z Axis not implemented!");
-      return false;
+        break;
+      case Z_AXIS:
+        ROS_ERROR_STREAM_NAMED("grasp","Z Axis not implemented!");
+        return false;
 
-      break;
+        break;
     }
 
     /* The estimated probability of success for this grasp, or some other measure of how "good" it is.
@@ -194,7 +194,7 @@ bool SimpleGrasps::generateAxisGrasps(
     if( true )
     {
       tf::poseEigenToMsg(object_global_transform_ * grasp_pose, grasp_pose_msg.pose);
-      rviz_tools_->publishArrow(grasp_pose_msg.pose, moveit_visual_tools::GREEN);
+      visual_tools_->publishArrow(grasp_pose_msg.pose, moveit_visual_tools::GREEN);
     }
 
     // ------------------------------------------------------------------------
@@ -276,28 +276,29 @@ bool SimpleGrasps::generateAxisGrasps(
   ROS_INFO_STREAM_NAMED("grasp", "Generated " << possible_grasps.size() << " grasps." );
 
   // Visualize results
-  visualizeGrasps(possible_grasps, object_pose, grasp_data);
+  visualizeGrasps(possible_grasps, grasp_data);
 
   return true;
 }
 
 // Show all grasps in Rviz
 void SimpleGrasps::visualizeGrasps(const std::vector<moveit_msgs::Grasp>& possible_grasps,
-  const geometry_msgs::Pose& object_pose, const RobotGraspData& grasp_data)
+  const std::vector<trajectory_msgs::JointTrajectoryPoint> &ik_solutions,
+  const RobotGraspData& grasp_data)
 {
-  if(rviz_tools_->isMuted())
+  if(visual_tools_->isMuted())
   {
-    ROS_DEBUG_STREAM_NAMED("grasp","Not visualizing grasps - muted.");
+    ROS_DEBUG_STREAM_NAMED("visualizeGrasps","Not visualizing grasps - muted.");
     return;
   }
 
   if( !animate_ )
   {
-    ROS_DEBUG_STREAM_NAMED("grasp","Not visualizing grasps - animation set to false.");
+    ROS_DEBUG_STREAM_NAMED("visualizeGrasps","Not visualizing grasps - animation set to false.");
     return;
   }
 
-  ROS_DEBUG_STREAM_NAMED("grasp","Visualizing " << possible_grasps.size() << " grasps");
+  ROS_DEBUG_STREAM_NAMED("visualizeGrasps","Visualizing " << possible_grasps.size() << " grasps");
 
   int i = 0;
   for(std::vector<moveit_msgs::Grasp>::const_iterator grasp_it = possible_grasps.begin();
@@ -306,29 +307,24 @@ void SimpleGrasps::visualizeGrasps(const std::vector<moveit_msgs::Grasp>& possib
     if( !ros::ok() )  // Check that ROS is still ok and that user isn't trying to quit
       break;
 
-    // Make sure object is still visible
-    // removing object dependency
-    // rviz_tools_->publishObject(object_pose, grasp_data.object_size_, false);
-
     ++i;
 
     //ROS_DEBUG_STREAM_NAMED("grasp","Visualizing grasp pose " << i);
-
-      animateGrasp(*grasp_it, grasp_data);
+    animateGrasp(*grasp_it, grasp_data);
 
 
     // Show robot joint positions if available
-    /*
-      if( grasp_it->grasp_posture.position.size() > 1 )
-      {
+    if( ik_solutions.size() > i )
+    {
       ROS_WARN_STREAM_NAMED("temp","HAS IK SOLUTION - Positions:");
-      std::copy(grasp_it->grasp_posture.position.begin(), grasp_it->grasp_posture.position.end(), std::ostream_iterator<double>(std::cout, "\n"));
-      rviz_tools_->publishPlanningScene(grasp_it->grasp_posture.position);
+      visual_tools_->publishTrajectoryPoint(ik_solutions[i],"right_arm"); // TODO
       ros::Duration(5.0).sleep();
-      }
-    */
+    }
 
-    ros::Duration(0.001).sleep();
+    ROS_WARN_STREAM_NAMED("temp","solutions = " << ik_solutions.size());
+
+    //ros::Duration(0.001).sleep();
+    ros::Duration(1.0).sleep();
   }
 }
 
@@ -348,7 +344,7 @@ void SimpleGrasps::animateGrasp(const moveit_msgs::Grasp &grasp, const RobotGras
 
   // Display Grasp Score
   std::string text = "Grasp Quality: " + boost::lexical_cast<std::string>(int(grasp.grasp_quality*100)) + "%";
-  rviz_tools_->publishText(grasp_pose, text);
+  visual_tools_->publishText(grasp_pose, text);
 
   // Convert the grasp pose into the frame of reference of the approach/retreat frame_id
 
@@ -387,8 +383,8 @@ void SimpleGrasps::animateGrasp(const moveit_msgs::Grasp &grasp, const RobotGras
     // Convert eigen pre-grasp position back to regular message
     tf::poseEigenToMsg(pre_grasp_pose_eigen, pre_grasp_pose);
 
-    //rviz_tools_->publishArrow(pre_grasp_pose, BLUE);
-    rviz_tools_->publishEEMarkers(pre_grasp_pose);
+    //visual_tools_->publishArrow(pre_grasp_pose, BLUE);
+    visual_tools_->publishEEMarkers(pre_grasp_pose);
 
     ros::Duration(animation_speed_).sleep();
   }

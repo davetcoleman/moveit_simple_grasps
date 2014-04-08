@@ -102,7 +102,7 @@ class SimpleGrasps
 private:
 
   // class for publishing stuff to rviz
-  moveit_visual_tools::VisualToolsPtr rviz_tools_;
+  moveit_visual_tools::VisualToolsPtr visual_tools_;
 
   // Transform from frame of box to global frame
   Eigen::Affine3d object_global_transform_;
@@ -164,12 +164,19 @@ public:
 
   /**
    * \brief Show all grasps in Rviz
-   * \param possible_grasps
-   * \param object_pose
+   * \param possible_grasps - a set of grasp positions to visualize
+   * \param ik_solutions - a set of corresponding arm positions to achieve each grasp
    * \param grasp_data - custom settings for a robot's geometry
    */
   void visualizeGrasps(const std::vector<moveit_msgs::Grasp>& possible_grasps,
-    const geometry_msgs::Pose& object_pose, const RobotGraspData& grasp_data);
+    const RobotGraspData& grasp_data)
+  {
+    const std::vector<trajectory_msgs::JointTrajectoryPoint> ik_solutions;
+    visualizeGrasps(possible_grasps, ik_solutions, grasp_data);
+  }
+  void visualizeGrasps(const std::vector<moveit_msgs::Grasp>& possible_grasps,
+    const std::vector<trajectory_msgs::JointTrajectoryPoint> &ik_solutions,
+    const RobotGraspData& grasp_data);
 
   /**
    * \brief Animate the pre grasp, grasp, and post-grasp process - for testing and visualization

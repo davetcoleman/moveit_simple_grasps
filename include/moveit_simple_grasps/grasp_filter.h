@@ -69,16 +69,19 @@ namespace moveit_simple_grasps
 // Struct for passing parameters to threads, for cleaner code
 struct IkThreadStruct
 {
-  IkThreadStruct(std::vector<moveit_msgs::Grasp> &possible_grasps, // the input
-                 std::vector<moveit_msgs::Grasp> &filtered_grasps, // the result
-                 int grasps_id_start,
-                 int grasps_id_end,
-                 kinematics::KinematicsBasePtr kin_solver,
-                 double timeout,
-                 boost::mutex *lock,
-                 int thread_id)
+  IkThreadStruct(
+    std::vector<moveit_msgs::Grasp> &possible_grasps, // the input
+    std::vector<moveit_msgs::Grasp> &filtered_grasps, // the result
+    std::vector<trajectory_msgs::JointTrajectoryPoint> &ik_solutions, // the resulting solutions for each filtered grasp
+    int grasps_id_start,
+    int grasps_id_end,
+    kinematics::KinematicsBasePtr kin_solver,
+    double timeout,
+    boost::mutex *lock,
+    int thread_id)
     : possible_grasps_(possible_grasps),
       filtered_grasps_(filtered_grasps),
+      ik_solutions_(ik_solutions),
       grasps_id_start_(grasps_id_start),
       grasps_id_end_(grasps_id_end),
       kin_solver_(kin_solver),
@@ -89,6 +92,7 @@ struct IkThreadStruct
   }
   std::vector<moveit_msgs::Grasp> &possible_grasps_;
   std::vector<moveit_msgs::Grasp> &filtered_grasps_;
+  std::vector<trajectory_msgs::JointTrajectoryPoint> &ik_solutions_;
   int grasps_id_start_;
   int grasps_id_end_;
   kinematics::KinematicsBasePtr kin_solver_;
@@ -116,12 +120,12 @@ private:
   bool rviz_verbose_;
 
   // class for publishing stuff to rviz
-  moveit_visual_tools::VisualToolsPtr rviz_tools_;
+  moveit_visual_tools::VisualToolsPtr visual_tools_;
 
 public:
 
   // Constructor
-  GraspFilter( const std::string& base_link, bool rviz_verbose, 
+  GraspFilter( const std::string& base_link, bool rviz_verbose,
     moveit_visual_tools::VisualToolsPtr rviz_tools, const std::string& planning_group );
 
   // Destructor
@@ -129,13 +133,14 @@ public:
 
   // Of an array of grasps, choose just one for use
   bool chooseBestGrasp( const std::vector<moveit_msgs::Grasp>& possible_grasps,
-                        moveit_msgs::Grasp& chosen );
+    moveit_msgs::Grasp& chosen );
 
   // Take the nth grasp from the array
   bool filterNthGrasp(std::vector<moveit_msgs::Grasp>& possible_grasps, int n);
 
   // Choose the 1st grasp that is kinematically feasible
-  bool filterGrasps(std::vector<moveit_msgs::Grasp>& possible_grasps);
+  bool filterGrasps(std::vector<moveit_msgs::Grasp>& possible_grasps,
+    std::vector<trajectory_msgs::JointTrajectoryPoint>& ik_solutions);
 
 private:
 
