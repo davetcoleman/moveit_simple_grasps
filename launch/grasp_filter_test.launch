@@ -4,8 +4,8 @@
   <arg unless="$(arg debug)" name="launch_prefix" value="" />
   <arg     if="$(arg debug)" name="launch_prefix" value="gdb --ex run --args" />
 
-  <!-- -->
-  <node name="grasp_filter_test" launch-prefix="$(arg launch_prefix)" pkg="simple_grasps" 
+  <!-- Start the test -->
+  <node name="grasp_filter_test" launch-prefix="$(arg launch_prefix)" pkg="moveit_simple_grasps" 
 	type="grasp_filter_test" output="screen">
     <rosparam command="load" file="$(find baxter_moveit_config)/config/kinematics.yaml"/>
   </node>

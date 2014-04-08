@@ -40,16 +40,21 @@
 
 // ROS
 #include <ros/ros.h>
+
+// TF
 #include <tf_conversions/tf_eigen.h>
+
+// Msgs
 #include <geometry_msgs/PoseArray.h>
-//#include <sensor_msgs/JointState.h>
 #include <trajectory_msgs/JointTrajectory.h>
 #include <moveit_msgs/Grasp.h>
+
+// Eigen
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 #include <eigen_conversions/eigen_msg.h>
 
-// Rviz
+// Visualization
 #include <moveit_visual_tools/visual_tools.h>
 
 // C++

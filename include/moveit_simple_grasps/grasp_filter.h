@@ -40,21 +40,21 @@
 
 // ROS
 #include <ros/ros.h>
-#include <tf/tf.h>
+//#include <tf/tf.h>
 #include <tf_conversions/tf_eigen.h>
 #include <geometry_msgs/PoseArray.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <moveit_msgs/Grasp.h>
-#include <Eigen/Core>
-#include <Eigen/Geometry>
+//#include <Eigen/Core>
+//#include <Eigen/Geometry>
 
 // Rviz
-#include <visualization_msgs/Marker.h>
-#include <visualization_msgs/MarkerArray.h>
+//#include <visualization_msgs/Marker.h>
+//#include <visualization_msgs/MarkerArray.h>
 #include <moveit_visual_tools/visual_tools.h>
 
 // MoveIt
-#include <moveit/planning_scene_monitor/planning_scene_monitor.h>
+//#include <moveit/planning_scene_monitor/planning_scene_monitor.h>
 #include <moveit/robot_state/robot_state.h>
 #include <moveit/kinematics_plugin_loader/kinematics_plugin_loader.h>
 

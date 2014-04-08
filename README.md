@@ -1,4 +1,4 @@
-simple_grasps
+moveit_simple_grasps
 ====================
 
 Note: this code is mostly moved from [block_grasp_generator](https://github.com/davetcoleman/block_grasp_generator)
@@ -17,12 +17,18 @@ NEW: This package now depends on [moveit_visual_tools](https://github.com/davetc
 
  - [Baxter](https://github.com/davetcoleman/baxter)
  - [ClamArm](https://github.com/davetcoleman/clam)
- - [REEM](http://wiki.ros.org/Robots/REEM) - only with block_grasp_generator
+ - [REEM](http://wiki.ros.org/Robots/REEM)
 
 ## Build Status
 
-[![Build Status](https://travis-ci.org/davetcoleman/simple_grasps.png?branch=hydro-devel)](https://travis-ci.org/davetcoleman/simple_grasps)
+[![Build Status](https://travis-ci.org/davetcoleman/moveit_simple_grasps.png?branch=hydro-devel)](https://travis-ci.org/davetcoleman/moveit_simple_grasps)
 
 ## Testing and Example Code
 
 There are currently test scripts and examples in the [baxter_pick_place](https://github.com/davetcoleman/baxter/tree/hydro-devel/baxter_pick_place) package for using this grasp generator and in [reem_tabletop_grasping](https://github.com/pal-robotics/reem_tabletop_grasping).
+
+## Grasp Filter
+
+Creates several threads and tests a large number of potential grasps for kinematic feasibility.
+
+<img align="right" src="https://raw.github.com/davetcoleman/moveit_visual_tools/hydro-devel/resources/filter.png" />

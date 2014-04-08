@@ -59,7 +59,7 @@
 // Grasp 
 #include <moveit_simple_grasps/simple_grasps.h>
 #include <moveit_simple_grasps/grasp_filter.h>
-#include <moveit_simple_grasps/visual_tools.h>
+#include <moveit_visual_tools/visual_tools.h>
 
 // Baxter specific properties
 #include <moveit_simple_grasps/baxter_data.h>
@@ -83,7 +83,7 @@ static const double TABLE_Y = 0;
 static const double TABLE_Z = -0.9/2+0.01;
 
 
-static const double OBJECT_SIZE = 0.04;
+static const double BLOCK_SIZE = 0.04;
 
 class GraspGeneratorTest
 {
@@ -95,7 +95,7 @@ private:
   moveit_simple_grasps::SimpleGraspsPtr simple_grasps_;
 
   // class for publishing stuff to rviz
-  moveit_simple_grasps::VisualToolsPtr visual_tools_;
+  moveit_visual_tools::VisualToolsPtr visual_tools_;
 
   // class for filter object
   moveit_simple_grasps::GraspFilterPtr grasp_filter_;
@@ -118,7 +118,7 @@ public:
 
     // ---------------------------------------------------------------------------------------------
     // Load the Robot Viz Tools for publishing to Rviz
-    visual_tools_.reset(new moveit_simple_grasps::VisualTools(baxter_pick_place::BASE_LINK));
+    visual_tools_.reset(new moveit_visual_tools::VisualTools(baxter_pick_place::BASE_LINK));
     visual_tools_->setLifetime(40.0);
     visual_tools_->setMuted(false);
     visual_tools_->setEEGroupName(grasp_data_.ee_group_);
@@ -126,7 +126,7 @@ public:
 
     // ---------------------------------------------------------------------------------------------
     // Load grasp generator
-    grasp_data_ = baxter_pick_place::loadRobotGraspData(arm_, OBJECT_SIZE); // Load robot specific data
+    grasp_data_ = baxter_pick_place::loadRobotGraspData(arm_); // Load robot specific data
     simple_grasps_.reset( new moveit_simple_grasps::SimpleGrasps(visual_tools_) );
 
     // ---------------------------------------------------------------------------------------------
@@ -146,15 +146,15 @@ public:
     {
       ROS_INFO_STREAM_NAMED("test","Adding random object " << i+1 << " of " << num_tests);
 
-      generateRandomObject(object_pose);
+      generateRandomBlock(object_pose);
       //getTestObject(object_pose);
-      visual_tools_->publishObject(object_pose, OBJECT_SIZE, false);
+      visual_tools_->publishBlock(object_pose, moveit_visual_tools::BLUE, BLOCK_SIZE);
 
       possible_grasps.clear();
 
       // Generate set of grasps for one object
       //visual_tools_->setMuted(true); // we don't want to see unfiltered grasps
-      simple_grasps_->generateGrasps( object_pose, grasp_data_, possible_grasps);
+      simple_grasps_->generateAllGrasps( object_pose, grasp_data_, possible_grasps);
       visual_tools_->setMuted(false);
 
       // Filter the grasp for only the ones that are reachable
@@ -171,7 +171,7 @@ public:
 
   }
 
-  void getTestObject(geometry_msgs::Pose& object_pose)
+  void getTestBlock(geometry_msgs::Pose& object_pose)
   {
     // Position
     geometry_msgs::Pose start_object_pose;
@@ -204,12 +204,12 @@ public:
     object_pose = start_object_pose;
   }
 
-  void generateRandomObject(geometry_msgs::Pose& object_pose)
+  void generateRandomBlock(geometry_msgs::Pose& object_pose)
   {
     // Position
     object_pose.position.x = fRand(0.7,TABLE_DEPTH);
     object_pose.position.y = fRand(-TABLE_WIDTH/2,-0.1);
-    object_pose.position.z = TABLE_Z + TABLE_HEIGHT / 2.0 + OBJECT_SIZE / 2.0;
+    object_pose.position.z = TABLE_Z + TABLE_HEIGHT / 2.0 + BLOCK_SIZE / 2.0;
   
     // Orientation
     double angle = M_PI * fRand(0.1,1);
