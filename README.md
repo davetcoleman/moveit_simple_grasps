@@ -7,7 +7,7 @@ Generate basic grasp poses for simple objects such as blocks or cylinders for us
 
 Research code by [Dave Coleman](http://dav.ee) at the Correll Robotics Lab, University of Colorado Boulder
 
-<img align="right" src="https://raw.github.com/davetcoleman/moveit_visual_tools/hydro-devel/resources/demo.png" />
+<img align="right" src="https://raw.github.com/davetcoleman/moveit_simple_grasps/hydro-devel/resources/demo.png" />
 
 ## Install
 
@@ -31,4 +31,4 @@ There are currently test scripts and examples in the [baxter_pick_place](https:/
 
 Creates several threads and tests a large number of potential grasps for kinematic feasibility.
 
-<img align="right" src="https://raw.github.com/davetcoleman/moveit_visual_tools/hydro-devel/resources/filter.png" />
+<img align="right" src="https://raw.github.com/davetcoleman/moveit_simple_grasps/hydro-devel/resources/filter.png" />
