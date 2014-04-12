@@ -113,7 +113,7 @@ namespace moveit_simple_grasps
       // ---------------------------------------------------------------------------------------------
       // Set object width and generate grasps
       grasp_data_.object_size_ = goal->width;
-      simple_grasps_->generateAllGrasps(goal->pose, grasp_data_, result_.grasps);
+      simple_grasps_->generateBlockGrasps(goal->pose, grasp_data_, result_.grasps);
 
       // ---------------------------------------------------------------------------------------------
       // Publish results

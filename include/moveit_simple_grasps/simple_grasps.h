@@ -46,8 +46,10 @@
 
 // Msgs
 #include <geometry_msgs/PoseArray.h>
-#include <trajectory_msgs/JointTrajectory.h>
+
+// MoveIt
 #include <moveit_msgs/Grasp.h>
+#include <moveit/macros/deprecation.h>
 
 // Eigen
 #include <Eigen/Core>
@@ -109,7 +111,6 @@ private:
 
   // Choose whether the end effector is animated and shown for each potential grasp
   bool animate_;
-  double animation_speed_; // seconds to pause between animations
 
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW // Eigen requires 128-bit alignment for the Eigen::Vector2d's array (of 2 doubles). With GCC, this is done with a attribute ((aligned(16))).
@@ -130,15 +131,22 @@ public:
   }
 
   /**
-   * \brief Speed at which the end effector is animated grasping things
-  */
-  void setAnimationSpeed(double speed)
+   * \brief Moved to generateBlockGrasps
+   */
+  MOVEIT_DEPRECATED bool generateAllGrasps(const geometry_msgs::Pose& object_pose, const RobotGraspData& grasp_data,
+    std::vector<moveit_msgs::Grasp>& possible_grasps)
   {
-    animation_speed_ = speed;
+    generateBlockGrasps(object_pose, grasp_data, possible_grasps);
   }
 
-  // Create all possible grasp positions for a object
-  bool generateAllGrasps(const geometry_msgs::Pose& object_pose, const RobotGraspData& grasp_data,
+  /**
+   * \brief Create all possible grasp positions for a block
+   * \param 
+   * \param 
+   * \param 
+   * \return true if successful
+   */ 
+  bool generateBlockGrasps(const geometry_msgs::Pose& object_pose, const RobotGraspData& grasp_data,
     std::vector<moveit_msgs::Grasp>& possible_grasps);
 
   /**
@@ -162,27 +170,6 @@ public:
     const RobotGraspData& grasp_data,
     std::vector<moveit_msgs::Grasp>& possible_grasps);
 
-  /**
-   * \brief Show all grasps in Rviz
-   * \param possible_grasps - a set of grasp positions to visualize
-   * \param ik_solutions - a set of corresponding arm positions to achieve each grasp
-   * \param grasp_data - custom settings for a robot's geometry
-   */
-  void visualizeGrasps(const std::vector<moveit_msgs::Grasp>& possible_grasps,
-    const RobotGraspData& grasp_data)
-  {
-    const std::vector<trajectory_msgs::JointTrajectoryPoint> ik_solutions;
-    visualizeGrasps(possible_grasps, ik_solutions, grasp_data);
-  }
-  void visualizeGrasps(const std::vector<moveit_msgs::Grasp>& possible_grasps,
-    const std::vector<trajectory_msgs::JointTrajectoryPoint> &ik_solutions,
-    const RobotGraspData& grasp_data);
-
-  /**
-   * \brief Animate the pre grasp, grasp, and post-grasp process - for testing and visualization
-   * \param grasp - a fully completed manipulation message that descibes a grasp
-   */
-  void animateGrasp(const moveit_msgs::Grasp &grasp, const RobotGraspData& grasp_data);
 
   static void printObjectGraspData(const RobotGraspData& data)
   {

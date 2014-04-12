@@ -40,8 +40,7 @@ namespace moveit_simple_grasps
 // Constructor
 SimpleGrasps::SimpleGrasps(moveit_visual_tools::VisualToolsPtr visual_tools) :
   visual_tools_(visual_tools),
-  animate_(false),
-  animation_speed_(0.01)
+  animate_(false)
 {
 }
 
@@ -51,7 +50,7 @@ SimpleGrasps::~SimpleGrasps()
 }
 
 // Create all possible grasp positions for a object
-bool SimpleGrasps::generateAllGrasps(const geometry_msgs::Pose& object_pose, const RobotGraspData& grasp_data,
+bool SimpleGrasps::generateBlockGrasps(const geometry_msgs::Pose& object_pose, const RobotGraspData& grasp_data,
   std::vector<moveit_msgs::Grasp>& possible_grasps)
 {
   // ---------------------------------------------------------------------------------------------
@@ -276,120 +275,11 @@ bool SimpleGrasps::generateAxisGrasps(
   ROS_INFO_STREAM_NAMED("grasp", "Generated " << possible_grasps.size() << " grasps." );
 
   // Visualize results
-  visualizeGrasps(possible_grasps, grasp_data);
+  visual_tools_->publishGrasps(possible_grasps, grasp_data.ee_parent_link_);
 
   return true;
 }
 
-// Show all grasps in Rviz
-void SimpleGrasps::visualizeGrasps(const std::vector<moveit_msgs::Grasp>& possible_grasps,
-  const std::vector<trajectory_msgs::JointTrajectoryPoint> &ik_solutions,
-  const RobotGraspData& grasp_data)
-{
-  if(visual_tools_->isMuted())
-  {
-    ROS_DEBUG_STREAM_NAMED("visualizeGrasps","Not visualizing grasps - muted.");
-    return;
-  }
-
-  if( !animate_ )
-  {
-    ROS_DEBUG_STREAM_NAMED("visualizeGrasps","Not visualizing grasps - animation set to false.");
-    return;
-  }
-
-  ROS_DEBUG_STREAM_NAMED("visualizeGrasps","Visualizing " << possible_grasps.size() << " grasps");
-
-  int i = 0;
-  for(std::vector<moveit_msgs::Grasp>::const_iterator grasp_it = possible_grasps.begin();
-      grasp_it < possible_grasps.end(); ++grasp_it)
-  {
-    if( !ros::ok() )  // Check that ROS is still ok and that user isn't trying to quit
-      break;
-
-    ++i;
-
-    //ROS_DEBUG_STREAM_NAMED("grasp","Visualizing grasp pose " << i);
-    animateGrasp(*grasp_it, grasp_data);
-
-
-    // Show robot joint positions if available
-    if( ik_solutions.size() > i )
-    {
-      ROS_WARN_STREAM_NAMED("temp","HAS IK SOLUTION - Positions:");
-      visual_tools_->publishTrajectoryPoint(ik_solutions[i],"right_arm"); // TODO
-      ros::Duration(5.0).sleep();
-    }
-
-    ROS_WARN_STREAM_NAMED("temp","solutions = " << ik_solutions.size());
-
-    //ros::Duration(0.001).sleep();
-    ros::Duration(1.0).sleep();
-  }
-}
-
-void SimpleGrasps::animateGrasp(const moveit_msgs::Grasp &grasp, const RobotGraspData& grasp_data)
-{
-  // Grasp Pose Variables
-  geometry_msgs::Pose grasp_pose = grasp.grasp_pose.pose;
-  Eigen::Affine3d grasp_pose_eigen;
-  tf::poseMsgToEigen(grasp_pose, grasp_pose_eigen);
-
-  // Pre-grasp pose variables
-  geometry_msgs::Pose pre_grasp_pose;
-  Eigen::Affine3d pre_grasp_pose_eigen;
-
-  // Approach direction variables
-  Eigen::Vector3d pre_grasp_approach_direction_local;
-
-  // Display Grasp Score
-  std::string text = "Grasp Quality: " + boost::lexical_cast<std::string>(int(grasp.grasp_quality*100)) + "%";
-  visual_tools_->publishText(grasp_pose, text);
-
-  // Convert the grasp pose into the frame of reference of the approach/retreat frame_id
-
-  // Animate the movement - for ee approach direction
-  double animation_resulution = 0.1; // the lower the better the resolution
-  for(double percent = 0; percent < 1; percent += animation_resulution)
-  {
-    if( !ros::ok() ) // Check that ROS is still ok and that user isn't trying to quit
-      break;
-
-    // Copy original grasp pose to pre-grasp pose
-    pre_grasp_pose_eigen = grasp_pose_eigen;
-
-    // The direction of the pre-grasp
-    // Calculate the current animation position based on the percent
-    Eigen::Vector3d pre_grasp_approach_direction = Eigen::Vector3d(
-      -1 * grasp.pre_grasp_approach.direction.vector.x * grasp.pre_grasp_approach.desired_distance * (1-percent),
-      -1 * grasp.pre_grasp_approach.direction.vector.y * grasp.pre_grasp_approach.desired_distance * (1-percent),
-      -1 * grasp.pre_grasp_approach.direction.vector.z * grasp.pre_grasp_approach.desired_distance * (1-percent)
-    );
-
-    // Decide if we need to change the approach_direction to the local frame of the end effector orientation
-    if( grasp.pre_grasp_approach.direction.header.frame_id == grasp_data.ee_parent_link_ )
-    {
-      // Apply/compute the approach_direction vector in the local frame of the grasp_pose orientation
-      pre_grasp_approach_direction_local = grasp_pose_eigen.rotation() * pre_grasp_approach_direction;
-    }
-    else
-    {
-      pre_grasp_approach_direction_local = pre_grasp_approach_direction; //grasp_pose_eigen.rotation() * pre_grasp_approach_direction;
-    }
-
-    // Update the grasp matrix usign the new locally-framed approach_direction
-    pre_grasp_pose_eigen.translation() += pre_grasp_approach_direction_local;
-
-    // Convert eigen pre-grasp position back to regular message
-    tf::poseEigenToMsg(pre_grasp_pose_eigen, pre_grasp_pose);
-
-    //visual_tools_->publishArrow(pre_grasp_pose, BLUE);
-    visual_tools_->publishEEMarkers(pre_grasp_pose);
-
-    ros::Duration(animation_speed_).sleep();
-  }
-
-}
 
 
 } // namespace
