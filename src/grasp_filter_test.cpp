@@ -115,6 +115,9 @@ public:
       arm_("right"),
       planning_group_name_(arm_+"_arm")
   {
+    // ---------------------------------------------------------------------------------------------
+    // Load grasp data
+    grasp_data_ = baxter_pick_place::loadRobotGraspData(arm_); // Load robot specific data
 
     // ---------------------------------------------------------------------------------------------
     // Load the Robot Viz Tools for publishing to Rviz
@@ -124,16 +127,18 @@ public:
     visual_tools_->setEEGroupName(grasp_data_.ee_group_);
     visual_tools_->setPlanningGroupName(planning_group_name_);
 
+    // Clear out old collision objects just because
+    visual_tools_->removeAllCollisionObjects();
+
     // ---------------------------------------------------------------------------------------------
     // Load grasp generator
-    grasp_data_ = baxter_pick_place::loadRobotGraspData(arm_); // Load robot specific data
     simple_grasps_.reset( new moveit_simple_grasps::SimpleGrasps(visual_tools_) );
 
     // ---------------------------------------------------------------------------------------------
     // Load grasp filter
-    bool rviz_verbose = true;
-    grasp_filter_.reset(new moveit_simple_grasps::GraspFilter(baxter_pick_place::BASE_LINK, 
-        rviz_verbose, visual_tools_, planning_group_name_) );
+    bool visual_verbose = true;
+    robot_state::RobotState robot_state = visual_tools_->getPlanningSceneMonitor()->getPlanningScene()->getCurrentState();
+    grasp_filter_.reset(new moveit_simple_grasps::GraspFilter(robot_state, visual_verbose, visual_tools_, planning_group_name_) );        
 
     // ---------------------------------------------------------------------------------------------
     // Generate grasps for a bunch of random objects
@@ -160,17 +165,23 @@ public:
 
       // Generate set of grasps for one object
       visual_tools_->setMuted(true); // we don't want to see unfiltered grasps
-      simple_grasps_->generateAllGrasps( object_pose, grasp_data_, possible_grasps);
-      //visual_tools_->setMuted(false);
+      simple_grasps_->generateBlockGrasps( object_pose, grasp_data_, possible_grasps);
+      visual_tools_->setMuted(false);
 
       // Filter the grasp for only the ones that are reachable
       grasp_filter_->filterGrasps(possible_grasps, ik_solutions);
 
+      // TEST
+      /*
+      ROS_WARN_STREAM_NAMED("temp","publishing robot state");
+      visual_tools_->publishRobotState(ik_solutions[0], planning_group_name_);      
+      ros::Duration(5.0).sleep();
+      */
+
       // Visualize them
-      visual_tools_->setMuted(false);
-      simple_grasps_->setAnimateGrasps(true);
-      ROS_WARN_STREAM_NAMED("temp","before calling visualize grasps");
-      simple_grasps_->visualizeGrasps(possible_grasps, ik_solutions, grasp_data_);
+      //visual_tools_->setMuted(false);
+      //ROS_WARN_STREAM_NAMED("temp","before calling visualize grasps ============================");
+      visual_tools_->publishGrasps(possible_grasps, ik_solutions, grasp_data_.ee_parent_link_);
 
       // Make sure ros is still going
       if(!ros::ok())
@@ -186,8 +197,8 @@ public:
     geometry_msgs::Pose start_object_pose;
     geometry_msgs::Pose end_object_pose;
 
-    start_object_pose.position.x = 0.2;
-    start_object_pose.position.y = 0.0;
+    start_object_pose.position.x = 0.8;
+    start_object_pose.position.y = -0.5;
     start_object_pose.position.z = 0.02;
 
     end_object_pose.position.x = 0.25;
@@ -245,7 +256,7 @@ public:
 
 int main(int argc, char *argv[])
 {
-  int num_tests = 1;
+  int num_tests = 5;
 
   ros::init(argc, argv, "grasp_generator_test");
 

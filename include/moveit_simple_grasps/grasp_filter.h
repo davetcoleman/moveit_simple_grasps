@@ -73,15 +73,17 @@ struct IkThreadStruct
     std::vector<moveit_msgs::Grasp> &possible_grasps, // the input
     std::vector<moveit_msgs::Grasp> &filtered_grasps, // the result
     std::vector<trajectory_msgs::JointTrajectoryPoint> &ik_solutions, // the resulting solutions for each filtered grasp
+    Eigen::Affine3d &link_transform,
     int grasps_id_start,
     int grasps_id_end,
-    kinematics::KinematicsBasePtr kin_solver,
+    kinematics::KinematicsBaseConstPtr kin_solver,
     double timeout,
     boost::mutex *lock,
     int thread_id)
     : possible_grasps_(possible_grasps),
       filtered_grasps_(filtered_grasps),
       ik_solutions_(ik_solutions),
+      link_transform_(link_transform),
       grasps_id_start_(grasps_id_start),
       grasps_id_end_(grasps_id_end),
       kin_solver_(kin_solver),
@@ -93,9 +95,10 @@ struct IkThreadStruct
   std::vector<moveit_msgs::Grasp> &possible_grasps_;
   std::vector<moveit_msgs::Grasp> &filtered_grasps_;
   std::vector<trajectory_msgs::JointTrajectoryPoint> &ik_solutions_;
+  Eigen::Affine3d link_transform_;
   int grasps_id_start_;
   int grasps_id_end_;
-  kinematics::KinematicsBasePtr kin_solver_;
+  kinematics::KinematicsBaseConstPtr kin_solver_;
   double timeout_;
   boost::mutex *lock_;
   int thread_id_;
@@ -106,15 +109,14 @@ struct IkThreadStruct
 class GraspFilter
 {
 private:
-  // Shared robot model
-  robot_model::RobotModelConstPtr robot_model_;
+  // State of robot
+  robot_state::RobotState robot_state_;
 
   // Parameters from goal
-  const std::string base_link_;
   const std::string planning_group_;
 
   // threaded kinematic solvers
-  std::vector<kinematics::KinematicsBasePtr> kin_solvers_;
+  std::vector<kinematics::KinematicsBaseConstPtr> kin_solvers_;
 
   // whether to publish grasp info to rviz
   bool rviz_verbose_;
@@ -125,8 +127,8 @@ private:
 public:
 
   // Constructor
-  GraspFilter( const std::string& base_link, bool rviz_verbose,
-    moveit_visual_tools::VisualToolsPtr rviz_tools, const std::string& planning_group );
+  GraspFilter( robot_state::RobotState robot_state, bool rviz_verbose,
+    moveit_visual_tools::VisualToolsPtr visual_tools, const std::string& planning_group );
 
   // Destructor
   ~GraspFilter();
