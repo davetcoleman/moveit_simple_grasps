@@ -42,11 +42,10 @@ namespace moveit_simple_grasps
 {
 
 // Constructor
-GraspFilter::GraspFilter( robot_state::RobotState robot_state, bool rviz_verbose,
-                          moveit_visual_tools::VisualToolsPtr visual_tools, const std::string& planning_group ):
+GraspFilter::GraspFilter( robot_state::RobotState robot_state, 
+  moveit_visual_tools::VisualToolsPtr visual_tools, const std::string& planning_group ):
   robot_state_(robot_state),
   planning_group_(planning_group),
-  rviz_verbose_(rviz_verbose),
   visual_tools_(visual_tools)
 {
   ROS_INFO_STREAM_NAMED("filter","GraspFilter ready.");
@@ -169,7 +168,7 @@ bool GraspFilter::filterGrasps(std::vector<moveit_msgs::Grasp>& possible_grasps,
       bgroup.create_thread( boost::bind( &GraspFilter::filterGraspThread, this, tc ) );
     }
 
-    ROS_INFO_STREAM_NAMED("filter","Waiting to join threads...");
+    ROS_INFO_STREAM_NAMED("filter","Waiting to join " << num_threads << " ik threads...");
     bgroup.join_all(); // wait for all threads to finish
     ROS_INFO_STREAM_NAMED("filter","Done waiting to joint threads...");
 
@@ -203,7 +202,7 @@ void GraspFilter::filterGraspThread(IkThreadStruct ik_thread_struct)
   // Process the assigned grasps
   for( int i = ik_thread_struct.grasps_id_start_; i < ik_thread_struct.grasps_id_end_; ++i )
   {
-    ROS_DEBUG_STREAM_NAMED("filter", "Checking grasp #" << i);
+    //ROS_DEBUG_STREAM_NAMED("filter", "Checking grasp #" << i);
 
     // Clear out previous solution just in case - not sure if this is needed
     solution.clear();
@@ -238,9 +237,6 @@ void GraspFilter::filterGraspThread(IkThreadStruct ik_thread_struct)
         ik_thread_struct.ik_solutions_.push_back(point);
       }
 
-      // TODO: is this thread safe? (prob not)
-      if(rviz_verbose_)
-        visual_tools_->publishArrow(ik_thread_struct.possible_grasps_[i].grasp_pose.pose);
     }
     else if( error_code.val == moveit_msgs::MoveItErrorCodes::NO_IK_SOLUTION )
       ROS_WARN_STREAM_NAMED("filter","Unable to find IK solution for pose.");
@@ -253,7 +249,7 @@ void GraspFilter::filterGraspThread(IkThreadStruct ik_thread_struct)
       ROS_INFO_STREAM_NAMED("filter","IK solution error: MoveItErrorCodes.msg = " << error_code);
   }
 
-  ROS_INFO_STREAM_NAMED("filter","Thread " << ik_thread_struct.thread_id_ << " finished");
+  //ROS_DEBUG_STREAM_NAMED("filter","Thread " << ik_thread_struct.thread_id_ << " finished");
 }
 
 } // namespace

@@ -94,10 +94,10 @@ private:
   // Grasp generator
   moveit_simple_grasps::SimpleGraspsPtr simple_grasps_;
 
-  // class for publishing stuff to rviz
+  // Tool for visualizing things in Rviz
   moveit_visual_tools::VisualToolsPtr visual_tools_;
 
-  // class for filter object
+  // Grasp filter
   moveit_simple_grasps::GraspFilterPtr grasp_filter_;
 
   // data for generating grasps
@@ -136,9 +136,8 @@ public:
 
     // ---------------------------------------------------------------------------------------------
     // Load grasp filter
-    bool visual_verbose = true;
     robot_state::RobotState robot_state = visual_tools_->getPlanningSceneMonitor()->getPlanningScene()->getCurrentState();
-    grasp_filter_.reset(new moveit_simple_grasps::GraspFilter(robot_state, visual_verbose, visual_tools_, planning_group_name_) );        
+    grasp_filter_.reset(new moveit_simple_grasps::GraspFilter(robot_state, visual_tools_, planning_group_name_) );
 
     // ---------------------------------------------------------------------------------------------
     // Generate grasps for a bunch of random objects
@@ -164,24 +163,14 @@ public:
       ik_solutions.clear();
 
       // Generate set of grasps for one object
-      visual_tools_->setMuted(true); // we don't want to see unfiltered grasps
       simple_grasps_->generateBlockGrasps( object_pose, grasp_data_, possible_grasps);
-      visual_tools_->setMuted(false);
 
       // Filter the grasp for only the ones that are reachable
       grasp_filter_->filterGrasps(possible_grasps, ik_solutions);
 
-      // TEST
-      /*
-      ROS_WARN_STREAM_NAMED("temp","publishing robot state");
-      visual_tools_->publishRobotState(ik_solutions[0], planning_group_name_);      
-      ros::Duration(5.0).sleep();
-      */
-
       // Visualize them
-      //visual_tools_->setMuted(false);
-      //ROS_WARN_STREAM_NAMED("temp","before calling visualize grasps ============================");
-      visual_tools_->publishGrasps(possible_grasps, ik_solutions, grasp_data_.ee_parent_link_);
+      //visual_tools_->publishGrasps(possible_grasps, grasp_data_.ee_parent_link_);      
+      visual_tools_->publishIKSolutions(ik_solutions, 0.25);
 
       // Make sure ros is still going
       if(!ros::ok())

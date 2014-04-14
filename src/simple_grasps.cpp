@@ -190,7 +190,7 @@ bool SimpleGrasps::generateAxisGrasps(
 
 
     // DEBUG - show original grasp pose before tranform to gripper frame
-    if( true )
+    if( false )
     {
       tf::poseEigenToMsg(object_global_transform_ * grasp_pose, grasp_pose_msg.pose);
       visual_tools_->publishArrow(grasp_pose_msg.pose, moveit_visual_tools::GREEN);
@@ -273,9 +273,6 @@ bool SimpleGrasps::generateAxisGrasps(
   }
 
   ROS_INFO_STREAM_NAMED("grasp", "Generated " << possible_grasps.size() << " grasps." );
-
-  // Visualize results
-  visual_tools_->publishGrasps(possible_grasps, grasp_data.ee_parent_link_);
 
   return true;
 }

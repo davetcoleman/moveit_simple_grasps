@@ -35,8 +35,8 @@
 // Author: Dave Coleman
 // Desc:   Generates grasps for a cube
 
-#ifndef MOVEIT_SIMPLE_GRASPS__MOVEIT_SIMPLE_GRASPS_
-#define MOVEIT_SIMPLE_GRASPS__MOVEIT_SIMPLE_GRASPS_
+#ifndef MOVEIT_SIMPLE_GRASPS__MOVEIT_SIMPLE_GRASPS_H_
+#define MOVEIT_SIMPLE_GRASPS__MOVEIT_SIMPLE_GRASPS_H_
 
 // ROS
 #include <ros/ros.h>
@@ -151,6 +151,8 @@ public:
 
   /**
    * \brief Create grasp positions in one axis around a single pose
+   *        Note: to visualize these grasps use moveit_visual_tools.publishAnimatedGrasps() function or
+   *        moveit_visual_tools.publishIKSolutions() with the resulting data
    * \param pose - center point of object to be grasped
    * \param axis - axis relative to object pose to rotate generated grasps around
    * \param direction - a parallel gripper is typically symetric such that it can perform the same grasp 
@@ -188,7 +190,7 @@ public:
 }; // end of class
 
 typedef boost::shared_ptr<SimpleGrasps> SimpleGraspsPtr;
-typedef boost::shared_ptr<const SimpleGrasps> GraspGeneratorConstPtr;
+typedef boost::shared_ptr<const SimpleGrasps> SimpleGraspsConstPtr;
 
 } // namespace
 

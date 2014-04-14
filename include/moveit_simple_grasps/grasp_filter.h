@@ -118,16 +118,13 @@ private:
   // threaded kinematic solvers
   std::vector<kinematics::KinematicsBaseConstPtr> kin_solvers_;
 
-  // whether to publish grasp info to rviz
-  bool rviz_verbose_;
-
   // class for publishing stuff to rviz
   moveit_visual_tools::VisualToolsPtr visual_tools_;
 
 public:
 
   // Constructor
-  GraspFilter( robot_state::RobotState robot_state, bool rviz_verbose,
+  GraspFilter( robot_state::RobotState robot_state, 
     moveit_visual_tools::VisualToolsPtr visual_tools, const std::string& planning_group );
 
   // Destructor
