@@ -81,11 +81,11 @@ public:
   {
     // ---------------------------------------------------------------------------------------------
     // Load grasp data specific to our robot
-    grasp_data_ = baxter_pick_place::loadRobotGraspData(arm_); // Load robot specific data
+    grasp_data_ = grasp_data_loader::loadRobotGraspData(nh_, arm_); // Load robot specific data
 
     // ---------------------------------------------------------------------------------------------
     // Load the Robot Viz Tools for publishing to Rviz
-    visual_tools_.reset(new moveit_visual_tools::VisualTools(baxter_pick_place::BASE_LINK));
+    visual_tools_.reset(new moveit_visual_tools::VisualTools(grasp_data_loader::base_link_));
     visual_tools_->setLifetime(120.0);
     visual_tools_->setMuted(false);
     visual_tools_->setEEGroupName(grasp_data_.ee_group_);
