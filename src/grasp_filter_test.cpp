@@ -62,7 +62,7 @@
 #include <moveit_visual_tools/visual_tools.h>
 
 // Baxter specific properties
-#include <moveit_simple_grasps/baxter_data.h>
+#include <moveit_simple_grasps/grasp_data_loader.h>
 #include <moveit_simple_grasps/custom_environment2.h>
 
 namespace moveit_simple_grasps
@@ -117,11 +117,12 @@ public:
   {
     // ---------------------------------------------------------------------------------------------
     // Load grasp data
-    grasp_data_ = baxter_pick_place::loadRobotGraspData(arm_); // Load robot specific data
+    if (!grasp_data_loader::loadRobotGraspData(nh_, arm_, grasp_data_))
+      ros::shutdown();
 
     // ---------------------------------------------------------------------------------------------
     // Load the Robot Viz Tools for publishing to Rviz
-    visual_tools_.reset(new moveit_visual_tools::VisualTools(baxter_pick_place::BASE_LINK));
+    visual_tools_.reset(new moveit_visual_tools::VisualTools(grasp_data_loader::base_link_));
     visual_tools_->setLifetime(40.0);
     visual_tools_->setMuted(false);
     visual_tools_->setEEGroupName(grasp_data_.ee_group_);
@@ -216,26 +217,17 @@ public:
   void generateRandomBlock(geometry_msgs::Pose& object_pose)
   {
     // Position
-    object_pose.position.x = dRand(0.7,TABLE_DEPTH);
-    object_pose.position.y = dRand(-TABLE_WIDTH/2,-0.1);
+    object_pose.position.x = visual_tools_->dRand(0.7,TABLE_DEPTH);
+    object_pose.position.y = visual_tools_->dRand(-TABLE_WIDTH/2,-0.1);
     object_pose.position.z = TABLE_Z + TABLE_HEIGHT / 2.0 + BLOCK_SIZE / 2.0;
   
     // Orientation
-    double angle = M_PI * dRand(0.1,1);
+    double angle = M_PI * visual_tools_->dRand(0.1,1);
     Eigen::Quaterniond quat(Eigen::AngleAxis<double>(double(angle), Eigen::Vector3d::UnitZ()));
     object_pose.orientation.x = quat.x();
     object_pose.orientation.y = quat.y();
     object_pose.orientation.z = quat.z();
     object_pose.orientation.w = quat.w();
-  }
-
-  /**
-   * \brief Get random double between min and max
-   */
-  double dRand(double dMin, double dMax)
-  {
-    double d = (double)rand() / RAND_MAX;
-    return dMin + d * (dMax - dMin);
   }
 
 }; // end of class

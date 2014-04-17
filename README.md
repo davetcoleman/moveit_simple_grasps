@@ -9,6 +9,10 @@ Research code by [Dave Coleman](http://dav.ee) at the Correll Robotics Lab, Univ
 
 <img align="right" src="https://raw.github.com/davetcoleman/moveit_simple_grasps/hydro-devel/resources/demo.png" />
 
+## Build Status
+
+[![Build Status](https://travis-ci.org/davetcoleman/moveit_simple_grasps.png?branch=hydro-devel)](https://travis-ci.org/davetcoleman/moveit_simple_grasps)
+
 ## Install
 
 NEW: This package now depends on [moveit_visual_tools](https://github.com/davetcoleman/moveit_visual_tools)
@@ -18,10 +22,6 @@ NEW: This package now depends on [moveit_visual_tools](https://github.com/davetc
  - [Baxter](https://github.com/davetcoleman/baxter)
  - [ClamArm](https://github.com/davetcoleman/clam)
  - [REEM](http://wiki.ros.org/Robots/REEM)
-
-## Build Status
-
-[![Build Status](https://travis-ci.org/davetcoleman/moveit_simple_grasps.png?branch=hydro-devel)](https://travis-ci.org/davetcoleman/moveit_simple_grasps)
 
 ## Testing and Example Code
 
@@ -40,3 +40,8 @@ To run the grasp filter test, add:
  - a MotionPlanning display to Rviz with the 'Planned Path' section having the 'Show Robot Visual' checkbox checked
  - a Marker display to Rviz subscribed to ``/end_effector_marker``
  - Run ``roslaunch moveit_simple_grasps grasp_filter_test.launch``
+
+## Contributors
+
+ - Dave Coleman, CU Boulder @davetcoleman
+ - Bence Magyar, PAL Robotics @bmagyar

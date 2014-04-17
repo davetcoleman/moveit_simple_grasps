@@ -73,8 +73,8 @@ target_link_libraries(${PROJECT_NAME}_filter
 )
 
 # Test executable
-add_executable(grasp_filter_test src/grasp_filter_test.cpp)
-target_link_libraries(grasp_filter_test
+add_executable(${PROJECT_NAME}_grasp_filter_test src/grasp_filter_test.cpp)
+target_link_libraries(${PROJECT_NAME}_grasp_filter_test
   ${PROJECT_NAME} ${PROJECT_NAME}_filter ${catkin_LIBRARIES} ${Boost_LIBRARIES}
 )
 
@@ -103,6 +103,10 @@ install(DIRECTORY include/${PROJECT_NAME}/
   FILES_MATCHING PATTERN "*.h"
 )
 
-
+install(TARGETS
+  ${PROJECT_NAME}_server 
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 
