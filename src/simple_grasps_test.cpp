@@ -46,7 +46,7 @@
 #include <moveit_simple_grasps/simple_grasps.h>
 
 // Baxter specific properties
-#include <moveit_simple_grasps/baxter_data.h>
+#include <moveit_simple_grasps/grasp_data_loader.h>
 #include <moveit_simple_grasps/custom_environment2.h>
 
 namespace baxter_pick_place

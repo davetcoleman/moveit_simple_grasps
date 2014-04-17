@@ -9,6 +9,10 @@ Research code by [Dave Coleman](http://dav.ee) at the Correll Robotics Lab, Univ
 
 <img align="right" src="https://raw.github.com/davetcoleman/moveit_simple_grasps/hydro-devel/resources/demo.png" />
 
+## Build Status
+
+[![Build Status](https://travis-ci.org/davetcoleman/moveit_simple_grasps.png?branch=hydro-devel)](https://travis-ci.org/davetcoleman/moveit_simple_grasps)
+
 ## Install
 
 NEW: This package now depends on [moveit_visual_tools](https://github.com/davetcoleman/moveit_visual_tools)
@@ -19,10 +23,6 @@ NEW: This package now depends on [moveit_visual_tools](https://github.com/davetc
  - [ClamArm](https://github.com/davetcoleman/clam)
  - [REEM](http://wiki.ros.org/Robots/REEM)
 
-## Build Status
-
-[![Build Status](https://travis-ci.org/davetcoleman/moveit_simple_grasps.png?branch=hydro-devel)](https://travis-ci.org/davetcoleman/moveit_simple_grasps)
-
 ## Testing and Example Code
 
 There are currently test scripts and examples in the [baxter_pick_place](https://github.com/davetcoleman/baxter/tree/hydro-devel/baxter_pick_place) package for using this grasp generator and in [reem_tabletop_grasping](https://github.com/pal-robotics/reem_tabletop_grasping).
@@ -32,3 +32,8 @@ There are currently test scripts and examples in the [baxter_pick_place](https:/
 Creates several threads and tests a large number of potential grasps for kinematic feasibility.
 
 <img align="right" src="https://raw.github.com/davetcoleman/moveit_simple_grasps/hydro-devel/resources/filter.png" />
+
+## Contributors
+
+ - Dave Coleman, CU Boulder @davetcoleman
+ - Bence Magyar, PAL Robotics @bmagyar

@@ -62,7 +62,7 @@
 #include <moveit_visual_tools/visual_tools.h>
 
 // Baxter specific properties
-#include <moveit_simple_grasps/baxter_data.h>
+#include <moveit_simple_grasps/grasp_data_loader.h>
 #include <moveit_simple_grasps/custom_environment2.h>
 
 namespace moveit_simple_grasps
