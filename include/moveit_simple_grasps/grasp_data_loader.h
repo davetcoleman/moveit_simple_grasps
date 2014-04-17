@@ -43,7 +43,6 @@
 namespace grasp_data_loader
 {
 
-std::string robot_description_="robot_description";
 std::string base_link_ = "base_link";
 std::vector<std::string> joint_names;
 std::vector<double> pre_grasp_posture_;
@@ -54,36 +53,58 @@ double grasp_time_from_start_;
 std::string end_effector_name_;
 std::string end_effector_parent_link_;
 
-// robot dimensions
-double FLOOR_TO_BASE_HEIGHT;
-
-moveit_simple_grasps::RobotGraspData loadRobotGraspData(const ros::NodeHandle& nh, const std::string& side)
+bool loadRobotGraspData(const ros::NodeHandle& nh, const std::string& side, moveit_simple_grasps::RobotGraspData& grasp_data)
 {
-  ROS_ASSERT(nh.hasParam("floor_to_base_height"));
-  nh.getParam("floor_to_base_height", FLOOR_TO_BASE_HEIGHT);
-
-  ROS_ASSERT(nh.hasParam("robot_description"));
-  nh.getParam("robot_description", robot_description_);
-
-  ROS_ASSERT(nh.hasParam("base_link"));
+  // Load a param
+  if (!nh.hasParam("base_link"))
+  {
+    ROS_ERROR_STREAM_NAMED("grasp_data_loader","Grasp configuration parameter `base_link` missing from rosparam server. Did you load your end effector's configuration yaml file?");
+    return false;
+  }    
   nh.getParam("base_link", base_link_);
 
-  ROS_ASSERT(nh.hasParam("pregrasp_time_from_start"));
+  // Load a param
+  if (!nh.hasParam("pregrasp_time_from_start"))
+  {
+    ROS_ERROR_STREAM_NAMED("grasp_data_loader","Grasp configuration parameter `pregrasp_time_from_start` missing from rosparam server. Did you load your end effector's configuration yaml file?");
+    return false;
+  }    
   nh.getParam("pregrasp_time_from_start", pregrasp_time_from_start_);
 
-  ROS_ASSERT(nh.hasParam("grasp_time_from_start"));
+  // Load a param
+  if (!nh.hasParam("grasp_time_from_start"))
+  {
+    ROS_ERROR_STREAM_NAMED("grasp_data_loader","Grasp configuration parameter `grasp_time_from_start` missing from rosparam server. Did you load your end effector's configuration yaml file?");
+    return false;
+  }    
   nh.getParam("grasp_time_from_start", grasp_time_from_start_);
 
-  ROS_ASSERT(nh.hasParam("end_effector_name"));
+  // Load a param
+  if (!nh.hasParam("end_effector_name"))
+  {
+    ROS_ERROR_STREAM_NAMED("grasp_data_loader","Grasp configuration parameter `end_effector_name` missing from rosparam server. Did you load your end effector's configuration yaml file?");
+    return false;
+  }    
   nh.getParam("end_effector_name", end_effector_name_);
 
-  ROS_ASSERT(nh.hasParam("end_effector_parent_link"));
+  // Load a param
+  if (!nh.hasParam("end_effector_parent_link"))
+  {
+    ROS_ERROR_STREAM_NAMED("grasp_data_loader","Grasp configuration parameter `end_effector_parent_link` missing from rosparam server. Did you load your end effector's configuration yaml file?");
+    return false;
+  }    
   nh.getParam("end_effector_parent_link", end_effector_parent_link_);
 
-  ROS_ASSERT(nh.hasParam("joints"));
+  // Load a param
+  if (!nh.hasParam("joints"))
+  {
+    ROS_ERROR_STREAM_NAMED("grasp_data_loader","Grasp configuration parameter `joints` missing from rosparam server. Did you load your end effector's configuration yaml file?");
+    return false;
+  }    
   XmlRpc::XmlRpcValue joint_list;
   nh.getParam("joints", joint_list);
-  ROS_ASSERT(joint_list.getType() == XmlRpc::XmlRpcValue::TypeArray);
+  if (joint_list.getType() != XmlRpc::XmlRpcValue::TypeArray)
+
   for (int32_t i = 0; i < joint_list.size(); ++i)
   {
     ROS_ASSERT(joint_list[i].getType() == XmlRpc::XmlRpcValue::TypeString);
@@ -121,8 +142,6 @@ moveit_simple_grasps::RobotGraspData loadRobotGraspData(const ros::NodeHandle& n
     ROS_ASSERT(g_to_eef_list[i].getType() == XmlRpc::XmlRpcValue::TypeDouble);
     grasp_pose_to_eef_.push_back(static_cast<double>(g_to_eef_list[i]));
   }
-
-  moveit_simple_grasps::RobotGraspData grasp_data;
 
   // -------------------------------
   // Convert generic grasp pose to this end effector's frame of reference, approach direction for short
@@ -184,7 +203,7 @@ moveit_simple_grasps::RobotGraspData loadRobotGraspData(const ros::NodeHandle& n
   // Debug
   //moveit_simple_grasps::SimpleGrasps::printObjectGraspData(grasp_data);
 
-  return grasp_data;
+  return true;
 }
 
 

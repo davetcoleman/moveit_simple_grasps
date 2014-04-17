@@ -88,7 +88,8 @@ namespace moveit_simple_grasps
     {
       // ---------------------------------------------------------------------------------------------
       // Load grasp data specific to our robot
-      grasp_data_ = grasp_data_loader::loadRobotGraspData(nh_, side_); // Load robot specific data
+      if (!grasp_data_loader::loadRobotGraspData(nh_, side_, grasp_data_))
+        ros::shutdown();
 
       // ---------------------------------------------------------------------------------------------
       // Load the Robot Viz Tools for publishing to Rviz

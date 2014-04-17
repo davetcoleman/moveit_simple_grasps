@@ -1,6 +1,4 @@
-robot_description : 'robot_description'
-base_link : 'base_link'
-floor_to_base_height : -0.9
+base_link : 'base'
 
 #default grasp params
 joints : ['hand_right_index_joint', 'hand_right_middle_joint', 'hand_right_thumb_joint']
