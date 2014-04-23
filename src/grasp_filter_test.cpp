@@ -168,7 +168,7 @@ public:
 
       // Visualize them
       visual_tools_->publishAnimatedGrasps(possible_grasps, grasp_data_.ee_parent_link_);      
-      //visual_tools_->publishIKSolutions(ik_solutions, 0.25);
+      visual_tools_->publishIKSolutions(ik_solutions, 0.25);
 
       // Make sure ros is still going
       if(!ros::ok())

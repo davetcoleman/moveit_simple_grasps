@@ -17,9 +17,9 @@
   <arg name="eef" default="baxter_right_hand" />
 
   <!-- Start the test -->
-  <node name="grasp_filter_test" launch-prefix="$(arg launch_prefix)" pkg="moveit_simple_grasps" 
-	type="moveit_simple_grasps_filter_test" output="screen">
-    <rosparam command="load" file="$(find baxter_moveit_config)/config/kinematics.yaml"/>
+  <node name="grasp_test" launch-prefix="$(arg launch_prefix)" pkg="moveit_simple_grasps" 
+	type="moveit_simple_grasps_test" output="screen">
+    <!--rosparam command="load" file="$(find baxter_moveit_config)/config/kinematics.yaml"/-->
     <rosparam command="load" file="$(find moveit_simple_grasps)/config/$(arg eef).yaml"/>    
   </node>
 
