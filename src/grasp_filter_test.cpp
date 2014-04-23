@@ -68,12 +68,6 @@
 namespace moveit_simple_grasps
 {
 
-// Baxter specific
-//static const std::string EE_PARENT_LINK = "right_wrist";
-//static const std::string EE_GROUP = "right_hand";
-//static const std::string EE_JOINT = "right_endpoint";
-//static const std::string BASE_LINK = "/base";
-
 // Table dimensions
 static const double TABLE_HEIGHT = .92;
 static const double TABLE_WIDTH = .85;
@@ -81,7 +75,6 @@ static const double TABLE_DEPTH = .47;
 static const double TABLE_X = 0.66;
 static const double TABLE_Y = 0;
 static const double TABLE_Z = -0.9/2+0.01;
-
 
 static const double BLOCK_SIZE = 0.04;
 
@@ -127,9 +120,13 @@ public:
     visual_tools_->setMuted(false);
     visual_tools_->setEEGroupName(grasp_data_.ee_group_);
     visual_tools_->setPlanningGroupName(planning_group_name_);
+    visual_tools_->setFloorToBaseHeight(-0.9);
 
     // Clear out old collision objects just because
     visual_tools_->removeAllCollisionObjects();
+
+    // Create a collision table for fun
+    visual_tools_->publishCollisionTable(TABLE_X, TABLE_Y, 0, TABLE_WIDTH, TABLE_HEIGHT, TABLE_DEPTH, "table");
 
     // ---------------------------------------------------------------------------------------------
     // Load grasp generator
@@ -153,9 +150,9 @@ public:
 
       // Remove randomness when we are only running one test
       if (num_tests == 1)
-        getTestBlock(object_pose);
+        generateTestObject(object_pose);
       else
-        generateRandomBlock(object_pose);
+        generateRandomObject(object_pose);
 
       // Show the block
       visual_tools_->publishBlock(object_pose, moveit_visual_tools::BLUE, BLOCK_SIZE);
@@ -170,8 +167,8 @@ public:
       grasp_filter_->filterGrasps(possible_grasps, ik_solutions);
 
       // Visualize them
-      //visual_tools_->publishGrasps(possible_grasps, grasp_data_.ee_parent_link_);      
-      visual_tools_->publishIKSolutions(ik_solutions, 0.25);
+      visual_tools_->publishAnimatedGrasps(possible_grasps, grasp_data_.ee_parent_link_);      
+      //visual_tools_->publishIKSolutions(ik_solutions, 0.25);
 
       // Make sure ros is still going
       if(!ros::ok())
@@ -181,7 +178,7 @@ public:
 
   }
 
-  void getTestBlock(geometry_msgs::Pose& object_pose)
+  void generateTestObject(geometry_msgs::Pose& object_pose)
   {
     // Position
     geometry_msgs::Pose start_object_pose;
@@ -214,7 +211,7 @@ public:
     object_pose = start_object_pose;
   }
 
-  void generateRandomBlock(geometry_msgs::Pose& object_pose)
+  void generateRandomObject(geometry_msgs::Pose& object_pose)
   {
     // Position
     object_pose.position.x = visual_tools_->dRand(0.7,TABLE_DEPTH);

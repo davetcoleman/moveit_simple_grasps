@@ -52,6 +52,8 @@
 namespace baxter_pick_place
 {
 
+static const double BLOCK_SIZE = 0.04;
+
 class GraspGeneratorTest
 {
 private:
@@ -110,15 +112,23 @@ public:
     {
       ROS_INFO_STREAM_NAMED("test","Adding random object " << i+1 << " of " << num_tests);
 
-      //generateRandomObject(object_pose);
-      generateTestObject(object_pose);
-      double wrist_roll = 0;
+      // Remove randomness when we are only running one test
+      if (num_tests == 1)
+        generateTestObject(object_pose);
+      else
+        generateRandomObject(object_pose);
+
+      // Show the block
+      visual_tools_->publishBlock(object_pose, moveit_visual_tools::BLUE, BLOCK_SIZE);
 
       possible_grasps.clear();
-      simple_grasps_->generateAxisGrasps( object_pose, moveit_simple_grasps::X_AXIS, moveit_simple_grasps::UP, 
-        moveit_simple_grasps::FULL, wrist_roll, grasp_data_, possible_grasps);
-      simple_grasps_->generateAxisGrasps( object_pose, moveit_simple_grasps::X_AXIS, moveit_simple_grasps::DOWN, 
-        moveit_simple_grasps::FULL, wrist_roll, grasp_data_, possible_grasps);
+
+      // Generate set of grasps for one object
+      simple_grasps_->generateBlockGrasps( object_pose, grasp_data_, possible_grasps);
+
+      // Visualize them
+      visual_tools_->publishAnimatedGrasps(possible_grasps, grasp_data_.ee_parent_link_);
+      //visual_tools_->publishGrasps(possible_grasps, grasp_data_.ee_parent_link_);
 
       // Test if done
       ++i;
@@ -192,8 +202,9 @@ public:
 int main(int argc, char *argv[])
 {
   int num_tests = 1;
-
   ros::init(argc, argv, "grasp_generator_test");
+
+  ROS_INFO_STREAM_NAMED("main","Simple Grasps Test");
 
   // Allow the action server to recieve and send ros messages
   ros::AsyncSpinner spinner(2);

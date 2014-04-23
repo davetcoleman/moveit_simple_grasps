@@ -60,7 +60,7 @@ bool loadRobotGraspData(const ros::NodeHandle& nh, const std::string& side, move
   {
     ROS_ERROR_STREAM_NAMED("grasp_data_loader","Grasp configuration parameter `base_link` missing from rosparam server. Did you load your end effector's configuration yaml file?");
     return false;
-  }    
+  }
   nh.getParam("base_link", base_link_);
 
   // Load a param
@@ -68,7 +68,7 @@ bool loadRobotGraspData(const ros::NodeHandle& nh, const std::string& side, move
   {
     ROS_ERROR_STREAM_NAMED("grasp_data_loader","Grasp configuration parameter `pregrasp_time_from_start` missing from rosparam server. Did you load your end effector's configuration yaml file?");
     return false;
-  }    
+  }
   nh.getParam("pregrasp_time_from_start", pregrasp_time_from_start_);
 
   // Load a param
@@ -76,7 +76,7 @@ bool loadRobotGraspData(const ros::NodeHandle& nh, const std::string& side, move
   {
     ROS_ERROR_STREAM_NAMED("grasp_data_loader","Grasp configuration parameter `grasp_time_from_start` missing from rosparam server. Did you load your end effector's configuration yaml file?");
     return false;
-  }    
+  }
   nh.getParam("grasp_time_from_start", grasp_time_from_start_);
 
   // Load a param
@@ -84,7 +84,7 @@ bool loadRobotGraspData(const ros::NodeHandle& nh, const std::string& side, move
   {
     ROS_ERROR_STREAM_NAMED("grasp_data_loader","Grasp configuration parameter `end_effector_name` missing from rosparam server. Did you load your end effector's configuration yaml file?");
     return false;
-  }    
+  }
   nh.getParam("end_effector_name", end_effector_name_);
 
   // Load a param
@@ -92,7 +92,7 @@ bool loadRobotGraspData(const ros::NodeHandle& nh, const std::string& side, move
   {
     ROS_ERROR_STREAM_NAMED("grasp_data_loader","Grasp configuration parameter `end_effector_parent_link` missing from rosparam server. Did you load your end effector's configuration yaml file?");
     return false;
-  }    
+  }
   nh.getParam("end_effector_parent_link", end_effector_parent_link_);
 
   // Load a param
@@ -100,16 +100,16 @@ bool loadRobotGraspData(const ros::NodeHandle& nh, const std::string& side, move
   {
     ROS_ERROR_STREAM_NAMED("grasp_data_loader","Grasp configuration parameter `joints` missing from rosparam server. Did you load your end effector's configuration yaml file?");
     return false;
-  }    
+  }
   XmlRpc::XmlRpcValue joint_list;
   nh.getParam("joints", joint_list);
   if (joint_list.getType() != XmlRpc::XmlRpcValue::TypeArray)
 
-  for (int32_t i = 0; i < joint_list.size(); ++i)
-  {
-    ROS_ASSERT(joint_list[i].getType() == XmlRpc::XmlRpcValue::TypeString);
-    joint_names.push_back(static_cast<std::string>(joint_list[i]));
-  }
+    for (int32_t i = 0; i < joint_list.size(); ++i)
+    {
+      ROS_ASSERT(joint_list[i].getType() == XmlRpc::XmlRpcValue::TypeString);
+      joint_names.push_back(static_cast<std::string>(joint_list[i]));
+    }
 
   if(nh.hasParam("pregrasp_posture"))
   {
@@ -139,8 +139,19 @@ bool loadRobotGraspData(const ros::NodeHandle& nh, const std::string& side, move
   ROS_ASSERT(g_to_eef_list.getType() == XmlRpc::XmlRpcValue::TypeArray);
   for (int32_t i = 0; i < g_to_eef_list.size(); ++i)
   {
-    ROS_ASSERT(g_to_eef_list[i].getType() == XmlRpc::XmlRpcValue::TypeDouble);
-    grasp_pose_to_eef_.push_back(static_cast<double>(g_to_eef_list[i]));
+    // Cast to double OR int
+    if (g_to_eef_list[i].getType() != XmlRpc::XmlRpcValue::TypeDouble)
+    {
+      if (g_to_eef_list[i].getType() != XmlRpc::XmlRpcValue::TypeInt )
+      {
+        ROS_ERROR_STREAM_NAMED("grasp_data_loader","Grasp configuration parameter `grasp_pose_to_eef` wrong data type - int or double required.");
+        return false;
+      }
+      else
+        grasp_pose_to_eef_.push_back(static_cast<int>(g_to_eef_list[i]));
+    }
+    else
+      grasp_pose_to_eef_.push_back(static_cast<double>(g_to_eef_list[i]));
   }
 
   // -------------------------------

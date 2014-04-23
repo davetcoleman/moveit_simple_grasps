@@ -39,7 +39,11 @@ Creates several threads and tests a large number of potential grasps for kinemat
 To run the grasp filter test, add:
  - a MotionPlanning display to Rviz with the 'Planned Path' section having the 'Show Robot Visual' checkbox checked
  - a Marker display to Rviz subscribed to ``/end_effector_marker``
- - Run ``roslaunch moveit_simple_grasps grasp_filter_test.launch``
+ - Run 
+
+```
+roslaunch moveit_simple_grasps grasp_filter_test.launch
+```
 
 ## Contributors
 
