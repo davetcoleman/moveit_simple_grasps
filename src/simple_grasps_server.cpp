@@ -177,7 +177,7 @@ namespace moveit_simple_grasps
       // fallback behaviour, generate default grasps when no options were passed
       if(goal->options.empty())
       {
-        simple_grasps_->generateAllGrasps(goal->pose, grasp_data_, result_.grasps);
+        simple_grasps_->generateBlockGrasps(goal->pose, grasp_data_, result_.grasps);
       }
 
       // ---------------------------------------------------------------------------------------------
