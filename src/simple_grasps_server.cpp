@@ -1,7 +1,7 @@
 /*
  * Software License Agreement (Modified BSD License)
  *
- *  Copyright (c) 2013, PAL Robotics, S.L.
+ *  Copyright (c) 2013-2014, PAL Robotics, S.L.
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -45,6 +45,7 @@
 // Grasp generation
 #include <moveit_simple_grasps/simple_grasps.h>
 #include <moveit_simple_grasps/GenerateGraspsAction.h>
+#include <moveit_simple_grasps/GraspGeneratorOptions.h>
 
 
 // Baxter specific properties
@@ -53,6 +54,55 @@
 
 namespace moveit_simple_grasps
 {
+
+  bool graspGeneratorOptions2Inner(
+          const moveit_simple_grasps::GraspGeneratorOptions &options,
+          grasp_axis_t &axis,
+          grasp_direction_t &direction,
+          grasp_rotation_t &rotation)
+  {
+    switch(options.grasp_axis)
+    {
+     case GraspGeneratorOptions::GRASP_AXIS_X:
+        axis = X_AXIS;
+        break;
+     case GraspGeneratorOptions::GRASP_AXIS_Y:
+        axis = Y_AXIS;
+        break;
+     case GraspGeneratorOptions::GRASP_AXIS_Z:
+        axis = Z_AXIS;
+        break;
+     default:
+        assert(false);
+        break;
+    }
+
+    switch(options.grasp_direction)
+    {
+     case GraspGeneratorOptions::GRASP_DIRECTION_UP:
+        direction = UP;
+        break;
+     case GraspGeneratorOptions::GRASP_DIRECTION_DOWN:
+        direction = DOWN;
+        break;
+     default:
+        assert(false);
+        break;
+    }
+
+    switch(options.grasp_rotation)
+    {
+     case GraspGeneratorOptions::GRASP_ROTATION_FULL:
+        rotation = FULL;
+        break;
+     case GraspGeneratorOptions::GRASP_ROTATION_HALF:
+        rotation = HALF;
+        break;
+     default:
+        assert(false);
+        break;
+    }
+  }
 
   class GraspGeneratorServer
   {
@@ -114,7 +164,21 @@ namespace moveit_simple_grasps
       // ---------------------------------------------------------------------------------------------
       // Set object width and generate grasps
       grasp_data_.object_size_ = goal->width;
-      simple_grasps_->generateBlockGrasps(goal->pose, grasp_data_, result_.grasps);
+
+      // Generate grasps for all options that were passed
+      grasp_axis_t axis;
+      grasp_direction_t direction;
+      grasp_rotation_t rotation;
+      for(size_t i=0; i<goal->options.size(); ++i)
+      {
+        graspGeneratorOptions2Inner(goal->options[i], axis, direction, rotation);
+        simple_grasps_->generateAxisGrasps(goal->pose, axis, direction, rotation, 0, grasp_data_, result_.grasps);
+      }
+      // fallback behaviour, generate default grasps when no options were passed
+      if(goal->options.empty())
+      {
+        simple_grasps_->generateAllGrasps(goal->pose, grasp_data_, result_.grasps);
+      }
 
       // ---------------------------------------------------------------------------------------------
       // Publish results

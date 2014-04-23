@@ -23,6 +23,10 @@ find_package(catkin REQUIRED COMPONENTS
   moveit_msgs
 )
 
+add_message_files(DIRECTORY msg FILES
+  GraspGeneratorOptions.msg
+)
+
 add_action_files(DIRECTORY action FILES
   GenerateGrasps.action
 )
