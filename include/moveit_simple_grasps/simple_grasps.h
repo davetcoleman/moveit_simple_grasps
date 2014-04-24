@@ -63,35 +63,12 @@
 #include <math.h>
 #define _USE_MATH_DEFINES
 
+#include <moveit_simple_grasps/grasp_data.h>
+
 namespace moveit_simple_grasps
 {
 
 static const double RAD2DEG = 57.2957795;
-
-struct RobotGraspData
-{
-  RobotGraspData() :
-    // Fill in default values where possible:
-    base_link_("/base_link"),
-    grasp_depth_(0.12),
-    angle_resolution_(16),
-    approach_retreat_desired_dist_(0.6),
-    approach_retreat_min_dist_(0.4),
-    object_size_(0.04)
-  {}
-  geometry_msgs::Pose grasp_pose_to_eef_pose_; // Convert generic grasp pose to this end effector's frame of reference
-  trajectory_msgs::JointTrajectory pre_grasp_posture_; // when the end effector is in "open" position
-  trajectory_msgs::JointTrajectory grasp_posture_; // when the end effector is in "close" position
-  std::string base_link_; // name of global frame with z pointing up
-  std::string ee_parent_link_; // the last link in the kinematic chain before the end effector, e.g. "/gripper_roll_link"
-  std::string ee_group_; // the end effector name
-  std::string ee_joint_; // the joint to actuate for gripping
-  double grasp_depth_; // distance from center point of object to end effector
-  int angle_resolution_; // generate grasps at PI/angle_resolution increments
-  double approach_retreat_desired_dist_; // how far back from the grasp position the pregrasp phase should be
-  double approach_retreat_min_dist_; // how far back from the grasp position the pregrasp phase should be at minimum
-  double object_size_; // for visualization
-};
 
 // Grasp axis orientation
 enum grasp_axis_t {X_AXIS, Y_AXIS, Z_AXIS};
