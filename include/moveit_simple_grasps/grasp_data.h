@@ -40,45 +40,19 @@
 #ifndef MOVEIT_SIMPLE_GRASPS__GRASP_DATA_H_
 #define MOVEIT_SIMPLE_GRASPS__GRASP_DATA_H_
 
-// ROS
-#include <ros/ros.h>
-
-// TF
-#include <tf_conversions/tf_eigen.h>
+// Ros
+#include <ros/node_handle.h>
 
 // Msgs
-#include <geometry_msgs/PoseArray.h>
-
-// MoveIt
-#include <moveit_msgs/Grasp.h>
-#include <moveit/macros/deprecation.h>
-
-// Eigen
-#include <Eigen/Core>
-#include <Eigen/Geometry>
-#include <eigen_conversions/eigen_msg.h>
-
-// Visualization
-#include <moveit_visual_tools/visual_tools.h>
-
-// C++
-#include <math.h>
-#define _USE_MATH_DEFINES
+#include <geometry_msgs/Pose.h>
+#include <trajectory_msgs/JointTrajectory.h>
 
 namespace moveit_simple_grasps
 {
 
-struct RobotGraspData
+class RobotGraspData
 {
-  RobotGraspData() :
-    // Fill in default values where possible:
-    base_link_("/base_link"),
-    grasp_depth_(0.12),
-    angle_resolution_(16),
-    approach_retreat_desired_dist_(0.6),
-    approach_retreat_min_dist_(0.4),
-    object_size_(0.04)
-  {}
+public:
   geometry_msgs::Pose grasp_pose_to_eef_pose_; // Convert generic grasp pose to this end effector's frame of reference
   trajectory_msgs::JointTrajectory pre_grasp_posture_; // when the end effector is in "open" position
   trajectory_msgs::JointTrajectory grasp_posture_; // when the end effector is in "close" position
@@ -91,6 +65,10 @@ struct RobotGraspData
   double approach_retreat_desired_dist_; // how far back from the grasp position the pregrasp phase should be
   double approach_retreat_min_dist_; // how far back from the grasp position the pregrasp phase should be at minimum
   double object_size_; // for visualization
+
+public:
+  RobotGraspData();
+  bool loadRobotGraspData(const ros::NodeHandle& nh, const std::string& side);
 };
 
 } // namespace

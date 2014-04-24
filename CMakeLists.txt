@@ -63,6 +63,7 @@ include_directories(
 # Grasp Generator Library
 add_library(${PROJECT_NAME}
   src/simple_grasps.cpp
+  src/grasp_data.cpp
 )
 target_link_libraries(${PROJECT_NAME} 
   ${catkin_LIBRARIES} ${Boost_LIBRARIES}
