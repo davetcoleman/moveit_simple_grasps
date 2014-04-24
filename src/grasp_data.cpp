@@ -50,7 +50,7 @@
 
 namespace moveit_simple_grasps
 {
-  RobotGraspData::RobotGraspData() :
+  GraspData::GraspData() :
     // Fill in default values where possible:
     base_link_("/base_link"),
     grasp_depth_(0.12),
@@ -60,7 +60,7 @@ namespace moveit_simple_grasps
     object_size_(0.04)
   {}
 
-  bool RobotGraspData::loadRobotGraspData(const ros::NodeHandle& nh, const std::string& side)
+  bool GraspData::loadRobotGraspData(const ros::NodeHandle& nh, const std::string& side)
   {
     std::vector<std::string> joint_names;
     std::vector<double> pre_grasp_posture_;

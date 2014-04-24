@@ -50,7 +50,7 @@
 namespace moveit_simple_grasps
 {
 
-class RobotGraspData
+class GraspData
 {
 public:
   geometry_msgs::Pose grasp_pose_to_eef_pose_; // Convert generic grasp pose to this end effector's frame of reference
@@ -67,7 +67,7 @@ public:
   double object_size_; // for visualization
 
 public:
-  RobotGraspData();
+  GraspData();
   bool loadRobotGraspData(const ros::NodeHandle& nh, const std::string& side);
 };
 

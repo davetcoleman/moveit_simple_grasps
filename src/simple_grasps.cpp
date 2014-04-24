@@ -50,7 +50,7 @@ SimpleGrasps::~SimpleGrasps()
 }
 
 // Create all possible grasp positions for a object
-bool SimpleGrasps::generateBlockGrasps(const geometry_msgs::Pose& object_pose, const RobotGraspData& grasp_data,
+bool SimpleGrasps::generateBlockGrasps(const geometry_msgs::Pose& object_pose, const GraspData& grasp_data,
   std::vector<moveit_msgs::Grasp>& possible_grasps)
 {
   // ---------------------------------------------------------------------------------------------
@@ -70,7 +70,7 @@ bool SimpleGrasps::generateAxisGrasps(
   grasp_direction_t direction,
   grasp_rotation_t rotation,
   double hand_roll,
-  const RobotGraspData& grasp_data,
+  const GraspData& grasp_data,
   std::vector<moveit_msgs::Grasp>& possible_grasps)
 {
   // ---------------------------------------------------------------------------------------------

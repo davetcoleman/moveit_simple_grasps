@@ -110,7 +110,7 @@ public:
   /**
    * \brief Moved to generateBlockGrasps
    */
-  MOVEIT_DEPRECATED bool generateAllGrasps(const geometry_msgs::Pose& object_pose, const RobotGraspData& grasp_data,
+  MOVEIT_DEPRECATED bool generateAllGrasps(const geometry_msgs::Pose& object_pose, const GraspData& grasp_data,
     std::vector<moveit_msgs::Grasp>& possible_grasps)
   {
     generateBlockGrasps(object_pose, grasp_data, possible_grasps);
@@ -123,7 +123,7 @@ public:
    * \param 
    * \return true if successful
    */ 
-  bool generateBlockGrasps(const geometry_msgs::Pose& object_pose, const RobotGraspData& grasp_data,
+  bool generateBlockGrasps(const geometry_msgs::Pose& object_pose, const GraspData& grasp_data,
     std::vector<moveit_msgs::Grasp>& possible_grasps);
 
   /**
@@ -146,11 +146,11 @@ public:
     grasp_direction_t direction,
     grasp_rotation_t rotation,
     double hand_roll,
-    const RobotGraspData& grasp_data,
+    const GraspData& grasp_data,
     std::vector<moveit_msgs::Grasp>& possible_grasps);
 
 
-  static void printObjectGraspData(const RobotGraspData& data)
+  static void printObjectGraspData(const GraspData& data)
   {
     ROS_INFO_STREAM_NAMED("grasp","ROBOT GRASP DATA DEBUG OUTPUT ---------------------");
     ROS_INFO_STREAM_NAMED("grasp","Base Link: " << data.base_link_);

@@ -67,7 +67,7 @@ private:
   moveit_visual_tools::VisualToolsPtr visual_tools_;
 
   // robot-specific data for generating grasps
-  moveit_simple_grasps::RobotGraspData grasp_data_;
+  moveit_simple_grasps::GraspData grasp_data_;
 
   // which baxter arm are we using
   std::string arm_;
