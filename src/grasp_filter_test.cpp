@@ -62,7 +62,7 @@
 #include <moveit_visual_tools/visual_tools.h>
 
 // Baxter specific properties
-#include <moveit_simple_grasps/grasp_data_loader.h>
+#include <moveit_simple_grasps/grasp_data.h>
 #include <moveit_simple_grasps/custom_environment2.h>
 
 namespace moveit_simple_grasps
@@ -94,7 +94,7 @@ private:
   moveit_simple_grasps::GraspFilterPtr grasp_filter_;
 
   // data for generating grasps
-  moveit_simple_grasps::RobotGraspData grasp_data_;
+  moveit_simple_grasps::GraspData grasp_data_;
 
   // which baxter arm are we using
   std::string arm_;
@@ -110,12 +110,12 @@ public:
   {
     // ---------------------------------------------------------------------------------------------
     // Load grasp data
-    if (!grasp_data_loader::loadRobotGraspData(nh_, arm_, grasp_data_))
+    if (!grasp_data_.loadRobotGraspData(nh_, arm_))
       ros::shutdown();
 
     // ---------------------------------------------------------------------------------------------
     // Load the Robot Viz Tools for publishing to Rviz
-    visual_tools_.reset(new moveit_visual_tools::VisualTools(grasp_data_loader::base_link_));
+    visual_tools_.reset(new moveit_visual_tools::VisualTools(grasp_data_.base_link_));
     visual_tools_->setLifetime(40.0);
     visual_tools_->setMuted(false);
     visual_tools_->setEEGroupName(grasp_data_.ee_group_);
