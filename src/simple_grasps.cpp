@@ -39,8 +39,7 @@ namespace moveit_simple_grasps
 
 // Constructor
 SimpleGrasps::SimpleGrasps(moveit_visual_tools::VisualToolsPtr visual_tools) :
-  visual_tools_(visual_tools),
-  animate_(false)
+  visual_tools_(visual_tools)
 {
   ROS_DEBUG_STREAM_NAMED("grasps","Loaded simple grasp generator");
 }

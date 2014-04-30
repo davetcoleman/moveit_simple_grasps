@@ -124,6 +124,8 @@ private:
   // class for publishing stuff to rviz
   moveit_visual_tools::VisualToolsPtr visual_tools_;
 
+  bool verbose_;
+
 public:
 
   // Constructor

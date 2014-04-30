@@ -46,7 +46,8 @@ GraspFilter::GraspFilter( robot_state::RobotState robot_state,
   moveit_visual_tools::VisualToolsPtr visual_tools, const std::string& planning_group ):
   robot_state_(robot_state),
   planning_group_(planning_group),
-  visual_tools_(visual_tools)
+  visual_tools_(visual_tools),
+  verbose_(false)
 {
   ROS_DEBUG_STREAM_NAMED("filter","Loaded simple grasp filter");
 }
@@ -69,7 +70,7 @@ bool GraspFilter::chooseBestGrasp( const std::vector<moveit_msgs::Grasp>& possib
 
 // Return grasps that are kinematically feasible
 bool GraspFilter::filterGrasps(std::vector<moveit_msgs::Grasp>& possible_grasps,
-  std::vector<trajectory_msgs::JointTrajectoryPoint>& ik_solutions, bool filter_pregrasp, 
+  std::vector<trajectory_msgs::JointTrajectoryPoint>& ik_solutions, bool filter_pregrasp,
   const std::string &ee_parent_link)
 {
   // -----------------------------------------------------------------------------------------------
@@ -138,53 +139,53 @@ bool GraspFilter::filterGrasps(std::vector<moveit_msgs::Grasp>& possible_grasps,
   // Benchmark time
   ros::Time start_time;
   start_time = ros::Time::now();
+
+  // -----------------------------------------------------------------------------------------------
+  // Loop through poses and find those that are kinematically feasible
+  std::vector<moveit_msgs::Grasp> filtered_grasps;
+
+  boost::thread_group bgroup; // create a group of threads
+  boost::mutex lock; // used for sharing the same data structures
+
+  ROS_INFO_STREAM_NAMED("filter", "Filtering possible grasps with " << num_threads << " threads");
+
+  // split up the work between threads
+  double num_grasps_per_thread = double(possible_grasps.size()) / num_threads;
+  //ROS_INFO_STREAM("total grasps " << possible_grasps.size() << " per thead: " << num_grasps_per_thread);
+
+  int grasps_id_start;
+  int grasps_id_end = 0;
+
+  for(int i = 0; i < num_threads; ++i)
   {
+    grasps_id_start = grasps_id_end;
+    grasps_id_end = ceil(num_grasps_per_thread*(i+1));
+    if( grasps_id_end >= possible_grasps.size() )
+      grasps_id_end = possible_grasps.size();
+    //ROS_INFO_STREAM_NAMED("filter","low " << grasps_id_start << " high " << grasps_id_end);
 
-    // -----------------------------------------------------------------------------------------------
-    // Loop through poses and find those that are kinematically feasible
-    std::vector<moveit_msgs::Grasp> filtered_grasps;
-
-    boost::thread_group bgroup; // create a group of threads
-    boost::mutex lock; // used for sharing the same data structures
-
-    ROS_INFO_STREAM_NAMED("filter", "Filtering possible grasps with " << num_threads << " threads");
-
-    // split up the work between threads
-    double num_grasps_per_thread = double(possible_grasps.size()) / num_threads;
-    //ROS_INFO_STREAM("total grasps " << possible_grasps.size() << " per thead: " << num_grasps_per_thread);
-
-    int grasps_id_start;
-    int grasps_id_end = 0;
-
-    for(int i = 0; i < num_threads; ++i)
-    {
-      grasps_id_start = grasps_id_end;
-      grasps_id_end = ceil(num_grasps_per_thread*(i+1));
-      if( grasps_id_end >= possible_grasps.size() )
-        grasps_id_end = possible_grasps.size();
-      //ROS_INFO_STREAM_NAMED("filter","low " << grasps_id_start << " high " << grasps_id_end);
-
-      IkThreadStruct tc(possible_grasps, filtered_grasps, ik_solutions, link_transform, grasps_id_start,
-        grasps_id_end, kin_solvers_[i], filter_pregrasp, ee_parent_link, timeout, &lock, i);
-      bgroup.create_thread( boost::bind( &GraspFilter::filterGraspThread, this, tc ) );
-    }
-
-    ROS_INFO_STREAM_NAMED("filter","Waiting to join " << num_threads << " ik threads...");
-    bgroup.join_all(); // wait for all threads to finish
-    ROS_INFO_STREAM_NAMED("filter","Done waiting to joint threads...");
-
-    ROS_INFO_STREAM_NAMED("filter", "Found " << filtered_grasps.size() << " ik solutions out of " <<
-      possible_grasps.size() );
-
-    possible_grasps = filtered_grasps;
-
+    IkThreadStruct tc(possible_grasps, filtered_grasps, ik_solutions, link_transform, grasps_id_start,
+      grasps_id_end, kin_solvers_[i], filter_pregrasp, ee_parent_link, timeout, &lock, i);
+    bgroup.create_thread( boost::bind( &GraspFilter::filterGraspThread, this, tc ) );
   }
-  // End Benchmark time
-  double duration = (ros::Time::now() - start_time).toNSec() * 1e-6;
-  ROS_INFO_STREAM_NAMED("filter","Grasp generator IK grasp filtering benchmark time:");
-  std::cout << duration << "\t" << possible_grasps.size() << "\n";
 
-  ROS_INFO_STREAM_NAMED("filter","Possible grasps filtered to " << possible_grasps.size() << " options.");
+  ROS_DEBUG_STREAM_NAMED("filter","Waiting to join " << num_threads << " ik threads...");
+  bgroup.join_all(); // wait for all threads to finish
+
+  ROS_INFO_STREAM_NAMED("filter", "Filter complete, found " << filtered_grasps.size() << " ik solutions out of " <<
+    possible_grasps.size() );
+
+  possible_grasps = filtered_grasps;
+
+  if (verbose_)
+  {
+    // End Benchmark time
+    double duration = (ros::Time::now() - start_time).toNSec() * 1e-6;
+    ROS_INFO_STREAM_NAMED("filter","Grasp generator IK grasp filtering benchmark time:");
+    std::cout << duration << "\t" << possible_grasps.size() << "\n";
+
+    ROS_INFO_STREAM_NAMED("filter","Possible grasps filtered to " << possible_grasps.size() << " options.");
+  }
 
   return true;
 }
@@ -250,7 +251,7 @@ void GraspFilter::filterGraspThread(IkThreadStruct ik_thread_struct)
         }
         else if( error_code.val == moveit_msgs::MoveItErrorCodes::TIMED_OUT )
         {
-          ROS_DEBUG_STREAM_NAMED("filter","Unable to find IK solution for pre-grasp pose: Timed Out.");
+          //ROS_DEBUG_STREAM_NAMED("filter","Unable to find IK solution for pre-grasp pose: Timed Out.");
           continue;
         }
         else if( error_code.val != moveit_msgs::MoveItErrorCodes::SUCCESS )

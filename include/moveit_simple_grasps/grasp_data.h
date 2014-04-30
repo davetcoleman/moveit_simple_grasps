@@ -68,7 +68,10 @@ public:
 
 public:
   GraspData();
+
   bool loadRobotGraspData(const ros::NodeHandle& nh, const std::string& side);
+
+  void print();
 };
 
 } // namespace
