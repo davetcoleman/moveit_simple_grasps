@@ -278,6 +278,48 @@ bool SimpleGrasps::generateAxisGrasps(
   return true;
 }
 
+geometry_msgs::Pose SimpleGrasps::getPreGraspPose(const moveit_msgs::Grasp &grasp, const std::string &ee_parent_link)
+{
+  // Grasp Pose Variables
+  geometry_msgs::Pose grasp_pose = grasp.grasp_pose.pose;
+  Eigen::Affine3d grasp_pose_eigen;
+  tf::poseMsgToEigen(grasp_pose, grasp_pose_eigen);
+
+  // Get pre-grasp pose first
+  geometry_msgs::Pose pre_grasp_pose;
+  Eigen::Affine3d pre_grasp_pose_eigen = grasp_pose_eigen; // Copy original grasp pose to pre-grasp pose
+
+  // Approach direction variables
+  Eigen::Vector3d pre_grasp_approach_direction_local;
+
+  // The direction of the pre-grasp
+  // Calculate the current animation position based on the percent
+  Eigen::Vector3d pre_grasp_approach_direction = Eigen::Vector3d(
+    -1 * grasp.pre_grasp_approach.direction.vector.x * grasp.pre_grasp_approach.desired_distance,
+    -1 * grasp.pre_grasp_approach.direction.vector.y * grasp.pre_grasp_approach.desired_distance,
+    -1 * grasp.pre_grasp_approach.direction.vector.z * grasp.pre_grasp_approach.desired_distance
+  );
+
+  // Decide if we need to change the approach_direction to the local frame of the end effector orientation
+  if( grasp.pre_grasp_approach.direction.header.frame_id == ee_parent_link )
+  {
+    // Apply/compute the approach_direction vector in the local frame of the grasp_pose orientation
+    pre_grasp_approach_direction_local = grasp_pose_eigen.rotation() * pre_grasp_approach_direction;
+  }
+  else
+  {
+    pre_grasp_approach_direction_local = pre_grasp_approach_direction; //grasp_pose_eigen.rotation() * pre_grasp_approach_direction;
+  }
+
+  // Update the grasp matrix usign the new locally-framed approach_direction
+  pre_grasp_pose_eigen.translation() += pre_grasp_approach_direction_local;
+
+  // Convert eigen pre-grasp position back to regular message
+  tf::poseEigenToMsg(pre_grasp_pose_eigen, pre_grasp_pose);
+
+  return pre_grasp_pose;
+}
+
 
 
 } // namespace

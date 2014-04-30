@@ -149,6 +149,13 @@ public:
     const GraspData& grasp_data,
     std::vector<moveit_msgs::Grasp>& possible_grasps);
 
+  /**
+   * \brief Using an input grasp description, get the pregrasp pose
+   * \param grasp description
+   * \param name of parent link
+   * \return pregrasp pose
+   */
+  static geometry_msgs::Pose getPreGraspPose(const moveit_msgs::Grasp &grasp, const std::string &ee_parent_link);
 
   static void printObjectGraspData(const GraspData& data)
   {

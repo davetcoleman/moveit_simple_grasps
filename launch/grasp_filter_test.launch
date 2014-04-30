@@ -19,7 +19,7 @@
   </node>
 
   <!-- Which arm to use -->
-  <arg name="arm" default="left"/> 
+  <arg name="arm" default="right"/>
   <arg name="eef" default="baxter_$(arg arm)_hand" />
 
   <!-- Start the test -->

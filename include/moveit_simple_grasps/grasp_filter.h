@@ -40,21 +40,18 @@
 
 // ROS
 #include <ros/ros.h>
-//#include <tf/tf.h>
 #include <tf_conversions/tf_eigen.h>
 #include <geometry_msgs/PoseArray.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <moveit_msgs/Grasp.h>
-//#include <Eigen/Core>
-//#include <Eigen/Geometry>
+
+// Grasping
+#include <moveit_simple_grasps/simple_grasps.h>
 
 // Rviz
-//#include <visualization_msgs/Marker.h>
-//#include <visualization_msgs/MarkerArray.h>
 #include <moveit_visual_tools/visual_tools.h>
 
 // MoveIt
-//#include <moveit/planning_scene_monitor/planning_scene_monitor.h>
 #include <moveit/robot_state/robot_state.h>
 #include <moveit/kinematics_plugin_loader/kinematics_plugin_loader.h>
 
@@ -77,6 +74,8 @@ struct IkThreadStruct
     int grasps_id_start,
     int grasps_id_end,
     kinematics::KinematicsBaseConstPtr kin_solver,
+    bool filter_pregrasp,
+    std::string ee_parent_link,
     double timeout,
     boost::mutex *lock,
     int thread_id)
@@ -87,6 +86,8 @@ struct IkThreadStruct
       grasps_id_start_(grasps_id_start),
       grasps_id_end_(grasps_id_end),
       kin_solver_(kin_solver),
+      filter_pregrasp_(filter_pregrasp),
+      ee_parent_link_(ee_parent_link),
       timeout_(timeout),
       lock_(lock),
       thread_id_(thread_id)
@@ -99,6 +100,8 @@ struct IkThreadStruct
   int grasps_id_start_;
   int grasps_id_end_;
   kinematics::KinematicsBaseConstPtr kin_solver_;
+  bool filter_pregrasp_;
+  std::string ee_parent_link_;
   double timeout_;
   boost::mutex *lock_;
   int thread_id_;
@@ -137,13 +140,23 @@ public:
   // Take the nth grasp from the array
   bool filterNthGrasp(std::vector<moveit_msgs::Grasp>& possible_grasps, int n);
 
-  // Choose the 1st grasp that is kinematically feasible
+  /**
+   * \brief Choose the 1st grasp that is kinematically feasible
+   * \param 
+   * \param 
+   * \param whether to also check ik feasibility for the pregrasp position
+   * \return true on success 
+   */ 
   bool filterGrasps(std::vector<moveit_msgs::Grasp>& possible_grasps,
-    std::vector<trajectory_msgs::JointTrajectoryPoint>& ik_solutions);
+    std::vector<trajectory_msgs::JointTrajectoryPoint>& ik_solutions,
+    bool filter_pregrasp, const std::string &ee_parent_link);
 
 private:
 
-  // Thread for checking part of the possible grasps list
+  /**
+   * \brief Thread for checking part of the possible grasps list
+   * \param 
+   */
   void filterGraspThread(IkThreadStruct ik_thread_struct);
 
 

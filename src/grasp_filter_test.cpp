@@ -127,10 +127,10 @@ public:
     visual_tools_->setFloorToBaseHeight(-0.9);
 
     // Clear out old collision objects just because
-    visual_tools_->removeAllCollisionObjects();
+    //visual_tools_->removeAllCollisionObjects();
 
     // Create a collision table for fun
-    visual_tools_->publishCollisionTable(TABLE_X, TABLE_Y, 0, TABLE_WIDTH, TABLE_HEIGHT, TABLE_DEPTH, "table");
+    //visual_tools_->publishCollisionTable(TABLE_X, TABLE_Y, 0, TABLE_WIDTH, TABLE_HEIGHT, TABLE_DEPTH, "table");
 
     // ---------------------------------------------------------------------------------------------
     // Load grasp generator
@@ -168,7 +168,8 @@ public:
       simple_grasps_->generateBlockGrasps( object_pose, grasp_data_, possible_grasps);
 
       // Filter the grasp for only the ones that are reachable
-      grasp_filter_->filterGrasps(possible_grasps, ik_solutions);
+      bool filter_pregrasps = true;
+      grasp_filter_->filterGrasps(possible_grasps, ik_solutions, filter_pregrasps, visual_tools_->getEEParentLink());
 
       // Visualize them
       visual_tools_->publishAnimatedGrasps(possible_grasps, grasp_data_.ee_parent_link_);      
@@ -252,7 +253,6 @@ int main(int argc, char *argv[])
   {
     for (std::size_t i = 0; i < argc; ++i)
     {
-      ROS_INFO_STREAM_NAMED("temp","here " << argv[i]);
       if (strcmp(argv[i], "--verbose") == 0)
       {
         ROS_INFO_STREAM_NAMED("main","Running in VERBOSE mode (much slower)");

@@ -42,7 +42,7 @@ namespace moveit_simple_grasps
 {
 
 // Constructor
-GraspFilter::GraspFilter( robot_state::RobotState robot_state, 
+GraspFilter::GraspFilter( robot_state::RobotState robot_state,
   moveit_visual_tools::VisualToolsPtr visual_tools, const std::string& planning_group ):
   robot_state_(robot_state),
   planning_group_(planning_group),
@@ -69,7 +69,8 @@ bool GraspFilter::chooseBestGrasp( const std::vector<moveit_msgs::Grasp>& possib
 
 // Return grasps that are kinematically feasible
 bool GraspFilter::filterGrasps(std::vector<moveit_msgs::Grasp>& possible_grasps,
-  std::vector<trajectory_msgs::JointTrajectoryPoint>& ik_solutions)
+  std::vector<trajectory_msgs::JointTrajectoryPoint>& ik_solutions, bool filter_pregrasp, 
+  const std::string &ee_parent_link)
 {
   // -----------------------------------------------------------------------------------------------
   // Error check
@@ -163,8 +164,8 @@ bool GraspFilter::filterGrasps(std::vector<moveit_msgs::Grasp>& possible_grasps,
         grasps_id_end = possible_grasps.size();
       //ROS_INFO_STREAM_NAMED("filter","low " << grasps_id_start << " high " << grasps_id_end);
 
-      IkThreadStruct tc(possible_grasps, filtered_grasps, ik_solutions, link_transform, grasps_id_start, 
-                        grasps_id_end, kin_solvers_[i], timeout, &lock, i);
+      IkThreadStruct tc(possible_grasps, filtered_grasps, ik_solutions, link_transform, grasps_id_start,
+        grasps_id_end, kin_solvers_[i], filter_pregrasp, ee_parent_link, timeout, &lock, i);
       bgroup.create_thread( boost::bind( &GraspFilter::filterGraspThread, this, tc ) );
     }
 
@@ -173,7 +174,7 @@ bool GraspFilter::filterGrasps(std::vector<moveit_msgs::Grasp>& possible_grasps,
     ROS_INFO_STREAM_NAMED("filter","Done waiting to joint threads...");
 
     ROS_INFO_STREAM_NAMED("filter", "Found " << filtered_grasps.size() << " ik solutions out of " <<
-                          possible_grasps.size() );
+      possible_grasps.size() );
 
     possible_grasps = filtered_grasps;
 
@@ -188,11 +189,10 @@ bool GraspFilter::filterGrasps(std::vector<moveit_msgs::Grasp>& possible_grasps,
   return true;
 }
 
-// Thread for checking part of the possible grasps list
 void GraspFilter::filterGraspThread(IkThreadStruct ik_thread_struct)
 {
   // Seed state - start at zero
-  std::vector<double> ik_seed_state(7); // fill with zeros 
+  std::vector<double> ik_seed_state(7); // fill with zeros
   // TODO do not assume 7 dof
 
   std::vector<double> solution;
@@ -226,24 +226,60 @@ void GraspFilter::filterGraspThread(IkThreadStruct ik_thread_struct)
       // Copy solution to seed state so that next solution is faster
       ik_seed_state = solution;
 
+      // Start pre-grasp section ----------------------------------------------------------
+      if (ik_thread_struct.filter_pregrasp_)       // optionally check the pregrasp
+      {
+        // Convert to a pre-grasp
+        ik_pose = SimpleGrasps::getPreGraspPose(ik_thread_struct.possible_grasps_[i], ik_thread_struct.ee_parent_link_);
+
+        // Transform current pose to frame of planning group
+        Eigen::Affine3d eigen_pose;
+        tf::poseMsgToEigen(ik_pose, eigen_pose);
+        eigen_pose = ik_thread_struct.link_transform_ * eigen_pose;
+        tf::poseEigenToMsg(eigen_pose, ik_pose);
+
+        // Test it with IK
+        ik_thread_struct.kin_solver_->
+          searchPositionIK(ik_pose, ik_seed_state, ik_thread_struct.timeout_, solution, error_code);
+
+        // Results
+        if( error_code.val == moveit_msgs::MoveItErrorCodes::NO_IK_SOLUTION )
+        {
+          ROS_WARN_STREAM_NAMED("filter","Unable to find IK solution for pre-grasp pose.");
+          continue;
+        }
+        else if( error_code.val == moveit_msgs::MoveItErrorCodes::TIMED_OUT )
+        {
+          ROS_DEBUG_STREAM_NAMED("filter","Unable to find IK solution for pre-grasp pose: Timed Out.");
+          continue;
+        }
+        else if( error_code.val != moveit_msgs::MoveItErrorCodes::SUCCESS )
+        {
+          ROS_INFO_STREAM_NAMED("filter","IK solution error for pre-grasp: MoveItErrorCodes.msg = " << error_code);
+          continue;
+        }
+      }
+      // Both grasp and pre-grasp have passed
       // Lock the result vector so we can add to it for a second
       {
         boost::mutex::scoped_lock slock(*ik_thread_struct.lock_);
         ik_thread_struct.filtered_grasps_.push_back( ik_thread_struct.possible_grasps_[i] );
 
         trajectory_msgs::JointTrajectoryPoint point;
-        point.positions = solution;
+        //point.positions = ik_seed_state; // show the grasp solution
+        point.positions = solution; // show the pre-grasp solution
+
         // Copy solution so that we can optionally use it later
         ik_thread_struct.ik_solutions_.push_back(point);
       }
 
+      // End pre-grasp section -------------------------------------------------------
     }
     else if( error_code.val == moveit_msgs::MoveItErrorCodes::NO_IK_SOLUTION )
       ROS_WARN_STREAM_NAMED("filter","Unable to find IK solution for pose.");
     else if( error_code.val == moveit_msgs::MoveItErrorCodes::TIMED_OUT )
     {
-      //ROS_INFO_STREAM_NAMED("filter","Unable to find IK solution for pose: Timed Out.");
-      //std::copy(solution.begin(),solution.end(), std::ostream_iterator<double>(std::cout, "\n"));
+      //ROS_DEBUG_STREAM_NAMED("filter","Unable to find IK solution for pose: Timed Out.");
     }
     else
       ROS_INFO_STREAM_NAMED("filter","IK solution error: MoveItErrorCodes.msg = " << error_code);
