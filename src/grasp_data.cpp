@@ -175,56 +175,56 @@ namespace moveit_simple_grasps
     // Orientation
     double angle = M_PI / 2;  // turn on Z axis //TODO parametrize this
     Eigen::Quaterniond quat(Eigen::AngleAxis<double>(double(angle), Eigen::Vector3d::UnitY()));
-    this->grasp_pose_to_eef_pose_.orientation.x = quat.x();
-    this->grasp_pose_to_eef_pose_.orientation.y = quat.y();
-    this->grasp_pose_to_eef_pose_.orientation.z = quat.z();
-    this->grasp_pose_to_eef_pose_.orientation.w = quat.w();
+    grasp_pose_to_eef_pose_.orientation.x = quat.x();
+    grasp_pose_to_eef_pose_.orientation.y = quat.y();
+    grasp_pose_to_eef_pose_.orientation.z = quat.z();
+    grasp_pose_to_eef_pose_.orientation.w = quat.w();
 
     // Position // approach vector?
     ROS_ASSERT(grasp_pose_to_eef_.size() == 3);
-    this->grasp_pose_to_eef_pose_.position.x = grasp_pose_to_eef_[0];
-    this->grasp_pose_to_eef_pose_.position.y = grasp_pose_to_eef_[1];
-    this->grasp_pose_to_eef_pose_.position.z = grasp_pose_to_eef_[2];
+    grasp_pose_to_eef_pose_.position.x = grasp_pose_to_eef_[0];
+    grasp_pose_to_eef_pose_.position.y = grasp_pose_to_eef_[1];
+    grasp_pose_to_eef_pose_.position.z = grasp_pose_to_eef_[2];
 
     // -------------------------------
     // Create pre-grasp posture if specified
     if(!pre_grasp_posture_.empty())
     {
-      this->pre_grasp_posture_.header.frame_id = base_link_;
-      this->pre_grasp_posture_.header.stamp = ros::Time::now();
+      pre_grasp_posture_.header.frame_id = base_link_;
+      pre_grasp_posture_.header.stamp = ros::Time::now();
       // Name of joints:
-      this->pre_grasp_posture_.joint_names = joint_names;
+      pre_grasp_posture_.joint_names = joint_names;
       // Position of joints
-      this->pre_grasp_posture_.points.resize(1);
-      this->pre_grasp_posture_.points[0].positions = pre_grasp_posture_;
-      this->pre_grasp_posture_.points[0].time_from_start = ros::Duration(pregrasp_time_from_start_);
+      pre_grasp_posture_.points.resize(1);
+      pre_grasp_posture_.points[0].positions = pre_grasp_posture_;
+      pre_grasp_posture_.points[0].time_from_start = ros::Duration(pregrasp_time_from_start_);
     }
     // -------------------------------
     // Create grasp posture
-    this->grasp_posture_.header.frame_id = base_link_;
-    this->grasp_posture_.header.stamp = ros::Time::now();
+    grasp_posture_.header.frame_id = base_link_;
+    grasp_posture_.header.stamp = ros::Time::now();
     // Name of joints:
-    this->grasp_posture_.joint_names = joint_names;
+    grasp_posture_.joint_names = joint_names;
     // Position of joints
-    this->grasp_posture_.points.resize(1);
-    this->grasp_posture_.points[0].positions = grasp_posture_;
-    this->grasp_posture_.points[0].time_from_start = ros::Duration(grasp_time_from_start_);
+    grasp_posture_.points.resize(1);
+    grasp_posture_.points[0].positions = grasp_posture_;
+    grasp_posture_.points[0].time_from_start = ros::Duration(grasp_time_from_start_);
 
     // -------------------------------
     // SRDF Info
-    this->base_link_ = base_link_;
-    this->ee_parent_link_ = end_effector_parent_link_;
-    this->ee_group_ = end_effector_name_;
+    base_link_ = base_link_;
+    ee_parent_link_ = end_effector_parent_link_;
+    ee_group_ = end_effector_name_;
 
     // -------------------------------
     // Nums
-    this->approach_retreat_desired_dist_ = 0.3;
-    this->approach_retreat_min_dist_ = 0.06;
+    approach_retreat_desired_dist_ = 0.3;
+    approach_retreat_min_dist_ = 0.06;
     // distance from center point of object to end effector
-    this->grasp_depth_ = 0.06;// in negative or 0 this makes the grasps on the other side of the object! (like from below)
+    grasp_depth_ = 0.06;// in negative or 0 this makes the grasps on the other side of the object! (like from below)
 
     // generate grasps at PI/angle_resolution increments
-    this->angle_resolution_ = 16; //TODO parametrize this, or move to action interface
+    angle_resolution_ = 16; //TODO parametrize this, or move to action interface
 
     // Debug
     //moveit_simple_grasps::SimpleGrasps::printObjectGraspData(grasp_data);
