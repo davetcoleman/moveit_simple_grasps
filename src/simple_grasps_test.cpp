@@ -81,6 +81,10 @@ public:
       arm_("right"),
       planning_group_name_(arm_+"_arm")
   {
+    nh_.param("arm", arm_, std::string("left"));
+    planning_group_name_ = arm_+"_arm";
+    ROS_INFO_STREAM_NAMED("temp","arm side is " << arm_);
+
     // ---------------------------------------------------------------------------------------------
     // Load grasp data specific to our robot
     if (!grasp_data_.loadRobotGraspData(nh_, arm_))

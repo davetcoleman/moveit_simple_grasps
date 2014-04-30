@@ -8,7 +8,7 @@ pregrasp_posture : [0.0095]
 pregrasp_time_from_start : 4.0
 
 #close position
-grasp_posture : [0.0125]
+grasp_posture : [-0.0125]
 grasp_time_from_start : 4.0
 
 #desired pose from end effector to grasp - [x,y,z]

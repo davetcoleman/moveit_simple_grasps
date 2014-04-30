@@ -108,6 +108,10 @@ public:
       arm_("right"),
       planning_group_name_(arm_+"_arm")
   {
+    nh_.param("arm", arm_, std::string("left"));
+    planning_group_name_ = arm_+"_arm";
+    ROS_INFO_STREAM_NAMED("temp","arm side is " << arm_);
+
     // ---------------------------------------------------------------------------------------------
     // Load grasp data
     if (!grasp_data_.loadRobotGraspData(nh_, arm_))
@@ -242,6 +246,21 @@ int main(int argc, char *argv[])
   ros::AsyncSpinner spinner(2);
   spinner.start();
 
+  // Check for verbose flag
+  bool verbose = false;
+  if (argc > 1)
+  {
+    for (std::size_t i = 0; i < argc; ++i)
+    {
+      ROS_INFO_STREAM_NAMED("temp","here " << argv[i]);
+      if (strcmp(argv[i], "--verbose") == 0)
+      {
+        ROS_INFO_STREAM_NAMED("main","Running in VERBOSE mode (much slower)");
+        verbose = true;
+      }
+    }
+  }
+  
   // Seed random
   srand(ros::Time::now().toSec());
 
