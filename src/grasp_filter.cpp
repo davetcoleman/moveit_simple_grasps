@@ -48,7 +48,7 @@ GraspFilter::GraspFilter( robot_state::RobotState robot_state,
   planning_group_(planning_group),
   visual_tools_(visual_tools)
 {
-  ROS_INFO_STREAM_NAMED("filter","GraspFilter ready.");
+  ROS_DEBUG_STREAM_NAMED("filter","Loaded simple grasp filter");
 }
 
 GraspFilter::~GraspFilter()
