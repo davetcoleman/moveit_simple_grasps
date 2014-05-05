@@ -5,7 +5,7 @@ Note: this code is refactored and moved from [block_grasp_generator](https://git
 
 Generate basic grasp poses for simple objects such as blocks or cylinders for use with MoveIt! pick and place
 
-Research code by [Dave Coleman](http://dav.ee) at the Correll Robotics Lab, University of Colorado Boulder
+Developed by [Dave Coleman](http://dav.ee) at the Correll Robotics Lab, University of Colorado Boulder
 
 <img align="right" src="https://raw.github.com/davetcoleman/moveit_simple_grasps/hydro-devel/resources/demo.png" />
 
