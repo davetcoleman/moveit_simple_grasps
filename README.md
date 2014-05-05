@@ -15,7 +15,7 @@ Research code by [Dave Coleman](http://dav.ee) at the Correll Robotics Lab, Univ
 
 ## Install
 
-NEW: This package now depends on [moveit_visual_tools](https://github.com/davetcoleman/moveit_visual_tools)
+This package depends on [moveit_visual_tools](https://github.com/davetcoleman/moveit_visual_tools)
 
 ## Tested Robots
 
