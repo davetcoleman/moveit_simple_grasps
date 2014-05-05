@@ -129,8 +129,7 @@ public:
     visual_tools_.reset(new moveit_visual_tools::VisualTools(grasp_data_.base_link_, "/end_effector_marker", planning_scene_monitor_));
     visual_tools_->setLifetime(40.0);
     visual_tools_->setMuted(false);
-    visual_tools_->setEEGroupName(grasp_data_.ee_group_);
-    visual_tools_->setPlanningGroupName(planning_group_name_);
+    visual_tools_->loadEEMarker(grasp_data_.ee_group_, planning_group_name_);
     visual_tools_->setFloorToBaseHeight(-0.9);
 
     // Clear out old collision objects just because
@@ -146,7 +145,7 @@ public:
     // ---------------------------------------------------------------------------------------------
     // Load grasp filter
     robot_state::RobotState robot_state = planning_scene_monitor_->getPlanningScene()->getCurrentState();
-    grasp_filter_.reset(new moveit_simple_grasps::GraspFilter(robot_state, visual_tools_, planning_group_name_) );
+    grasp_filter_.reset(new moveit_simple_grasps::GraspFilter(robot_state, visual_tools_) );
 
     // ---------------------------------------------------------------------------------------------
     // Generate grasps for a bunch of random objects
@@ -176,11 +175,11 @@ public:
 
       // Filter the grasp for only the ones that are reachable
       bool filter_pregrasps = true;
-      grasp_filter_->filterGrasps(possible_grasps, ik_solutions, filter_pregrasps, grasp_data_.ee_parent_link_);
+      grasp_filter_->filterGrasps(possible_grasps, ik_solutions, filter_pregrasps, grasp_data_.ee_parent_link_, planning_group_name_);
 
       // Visualize them
       visual_tools_->publishAnimatedGrasps(possible_grasps, grasp_data_.ee_parent_link_);      
-      visual_tools_->publishIKSolutions(ik_solutions, 0.25);
+      visual_tools_->publishIKSolutions(ik_solutions, planning_group_name_, 0.25);
 
       // Make sure ros is still going
       if(!ros::ok())

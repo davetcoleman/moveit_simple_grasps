@@ -43,9 +43,8 @@ namespace moveit_simple_grasps
 
 // Constructor
 GraspFilter::GraspFilter( robot_state::RobotState robot_state,
-  moveit_visual_tools::VisualToolsPtr& visual_tools, const std::string& planning_group ):
+  moveit_visual_tools::VisualToolsPtr& visual_tools ):
   robot_state_(robot_state),
-  planning_group_(planning_group),
   visual_tools_(visual_tools),
   verbose_(false)
 {
@@ -71,7 +70,7 @@ bool GraspFilter::chooseBestGrasp( const std::vector<moveit_msgs::Grasp>& possib
 // Return grasps that are kinematically feasible
 bool GraspFilter::filterGrasps(std::vector<moveit_msgs::Grasp>& possible_grasps,
   std::vector<trajectory_msgs::JointTrajectoryPoint>& ik_solutions, bool filter_pregrasp,
-  const std::string &ee_parent_link)
+  const std::string &ee_parent_link, const std::string& planning_group)
 {
   // -----------------------------------------------------------------------------------------------
   // Error check
@@ -95,27 +94,27 @@ bool GraspFilter::filterGrasps(std::vector<moveit_msgs::Grasp>& possible_grasps,
 
   // -----------------------------------------------------------------------------------------------
   // Get the solver timeout from kinematics.yaml
-  double timeout = robot_state_.getRobotModel()->getJointModelGroup( planning_group_ )->getDefaultIKTimeout();
+  double timeout = robot_state_.getRobotModel()->getJointModelGroup( planning_group )->getDefaultIKTimeout();
   timeout = 0.05;
   ROS_DEBUG_STREAM_NAMED("grasp_filter","Grasp filter IK timeout " << timeout);
 
   // -----------------------------------------------------------------------------------------------
   // Load kinematic solvers if not already loaded
-  if( kin_solvers_.size() != num_threads )
+  if( kin_solvers_[planning_group].size() != num_threads )
   {
-    kin_solvers_.clear();
+    kin_solvers_[planning_group].clear();
 
-    const robot_model::JointModelGroup* jmg = robot_state_.getRobotModel()->getJointModelGroup(planning_group_);
+    const robot_model::JointModelGroup* jmg = robot_state_.getRobotModel()->getJointModelGroup(planning_group);
 
     // Create an ik solver for every thread
     for (int i = 0; i < num_threads; ++i)
     {
       //ROS_INFO_STREAM_NAMED("filter","Creating ik solver " << i);
 
-      kin_solvers_.push_back(jmg->getSolverInstance());
+      kin_solvers_[planning_group].push_back(jmg->getSolverInstance());
 
       // Test to make sure we have a valid kinematics solver
-      if( !kin_solvers_[i] )
+      if( !kin_solvers_[planning_group][i] )
       {
         ROS_ERROR_STREAM_NAMED("grasp_filter","No kinematic solver found");
         return false;
@@ -125,7 +124,7 @@ bool GraspFilter::filterGrasps(std::vector<moveit_msgs::Grasp>& possible_grasps,
 
   // Transform poses -------------------------------------------------------------------------------
   // bring the pose to the frame of the IK solver
-  const std::string &ik_frame = kin_solvers_[0]->getBaseFrame();
+  const std::string &ik_frame = kin_solvers_[planning_group][0]->getBaseFrame();
   Eigen::Affine3d link_transform;
   if (!moveit::core::Transforms::sameFrame(ik_frame, robot_state_.getRobotModel()->getModelFrame()))
   {
@@ -165,7 +164,7 @@ bool GraspFilter::filterGrasps(std::vector<moveit_msgs::Grasp>& possible_grasps,
     //ROS_INFO_STREAM_NAMED("filter","low " << grasps_id_start << " high " << grasps_id_end);
 
     IkThreadStruct tc(possible_grasps, filtered_grasps, ik_solutions, link_transform, grasps_id_start,
-      grasps_id_end, kin_solvers_[i], filter_pregrasp, ee_parent_link, timeout, &lock, i);
+      grasps_id_end, kin_solvers_[planning_group][i], filter_pregrasp, ee_parent_link, timeout, &lock, i);
     bgroup.create_thread( boost::bind( &GraspFilter::filterGraspThread, this, tc ) );
   }
 

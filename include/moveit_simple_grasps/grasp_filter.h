@@ -115,11 +115,8 @@ private:
   // State of robot
   robot_state::RobotState robot_state_;
 
-  // Parameters from goal
-  const std::string planning_group_;
-
   // threaded kinematic solvers
-  std::vector<kinematics::KinematicsBaseConstPtr> kin_solvers_;
+  std::map<std::string, std::vector<kinematics::KinematicsBaseConstPtr> > kin_solvers_;
 
   // class for publishing stuff to rviz
   moveit_visual_tools::VisualToolsPtr visual_tools_;
@@ -130,7 +127,7 @@ public:
 
   // Constructor
   GraspFilter( robot_state::RobotState robot_state, 
-    moveit_visual_tools::VisualToolsPtr& visual_tools, const std::string& planning_group );
+    moveit_visual_tools::VisualToolsPtr& visual_tools );
 
   // Destructor
   ~GraspFilter();
@@ -151,7 +148,8 @@ public:
    */ 
   bool filterGrasps(std::vector<moveit_msgs::Grasp>& possible_grasps,
     std::vector<trajectory_msgs::JointTrajectoryPoint>& ik_solutions,
-    bool filter_pregrasp, const std::string &ee_parent_link);
+    bool filter_pregrasp, const std::string &ee_parent_link, 
+    const std::string& planning_group);
 
 private:
 
