@@ -89,10 +89,14 @@ private:
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW // Eigen requires 128-bit alignment for the Eigen::Vector2d's array (of 2 doubles). With GCC, this is done with a attribute ((aligned(16))).
 
-  // Constructor
+  /**
+   * \brief Constructor
+   */
   SimpleGrasps(moveit_visual_tools::VisualToolsPtr rviz_tools);
 
-  // Destructor
+  /**
+   * \brief Destructor
+   */
   ~SimpleGrasps();
 
   /**
@@ -106,9 +110,9 @@ public:
 
   /**
    * \brief Create all possible grasp positions for a block
-   * \param 
-   * \param 
-   * \param 
+   * \param pose of block, where vector arrow is parallel to table plane
+   * \param data describing end effector
+   * \param resulting generated possible grasps
    * \return true if successful
    */ 
   bool generateBlockGrasps(const geometry_msgs::Pose& object_pose, const GraspData& grasp_data,
@@ -143,9 +147,13 @@ public:
    * \param name of parent link
    * \return pregrasp pose
    */
-  static geometry_msgs::Pose getPreGraspPose(const moveit_msgs::Grasp &grasp, const std::string &ee_parent_link);
+  static geometry_msgs::PoseStamped getPreGraspPose(const moveit_msgs::Grasp &grasp, const std::string &ee_parent_link);
 
-  static void printObjectGraspData(const GraspData& data)
+  /**
+   * \brief Print debug info
+   * DEPRECATRED: moved to grasp_data.cpp
+   */
+  MOVEIT_DEPRECATED static void printObjectGraspData(const GraspData& data)
   {
     ROS_INFO_STREAM_NAMED("grasp","ROBOT GRASP DATA DEBUG OUTPUT ---------------------");
     ROS_INFO_STREAM_NAMED("grasp","Base Link: " << data.base_link_);

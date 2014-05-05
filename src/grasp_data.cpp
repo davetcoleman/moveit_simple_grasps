@@ -236,13 +236,13 @@ bool GraspData::loadRobotGraspData(const ros::NodeHandle& nh, const std::string&
 
 void GraspData::print()
 {
+  ROS_WARN_STREAM_NAMED("grasp_data","Debug Grasp Data variable values:");
   std::cout << "grasp_pose_to_eef_pose_: \n" <<grasp_pose_to_eef_pose_<<std::endl;
   std::cout << "pre_grasp_posture_: \n" <<pre_grasp_posture_<<std::endl;
   std::cout << "grasp_posture_: \n" <<grasp_posture_<<std::endl;
   std::cout << "base_link_: " <<base_link_<<std::endl;
   std::cout << "ee_parent_link_: " <<ee_parent_link_<<std::endl;
   std::cout << "ee_group_: " <<ee_group_<<std::endl;
-  std::cout << "ee_joint_: " <<ee_joint_<<std::endl;
   std::cout << "grasp_depth_: " <<grasp_depth_<<std::endl;
   std::cout << "angle_resolution_: " <<angle_resolution_<<std::endl;
   std::cout << "approach_retreat_desired_dist_: " <<approach_retreat_desired_dist_<<std::endl;

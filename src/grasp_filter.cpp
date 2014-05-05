@@ -43,7 +43,7 @@ namespace moveit_simple_grasps
 
 // Constructor
 GraspFilter::GraspFilter( robot_state::RobotState robot_state,
-  moveit_visual_tools::VisualToolsPtr visual_tools, const std::string& planning_group ):
+  moveit_visual_tools::VisualToolsPtr& visual_tools, const std::string& planning_group ):
   robot_state_(robot_state),
   planning_group_(planning_group),
   visual_tools_(visual_tools),
@@ -97,7 +97,7 @@ bool GraspFilter::filterGrasps(std::vector<moveit_msgs::Grasp>& possible_grasps,
   // Get the solver timeout from kinematics.yaml
   double timeout = robot_state_.getRobotModel()->getJointModelGroup( planning_group_ )->getDefaultIKTimeout();
   timeout = 0.05;
-  ROS_INFO_STREAM_NAMED("grasp_filter","Planning timeout " << timeout);
+  ROS_DEBUG_STREAM_NAMED("grasp_filter","Grasp filter IK timeout " << timeout);
 
   // -----------------------------------------------------------------------------------------------
   // Load kinematic solvers if not already loaded
@@ -172,7 +172,7 @@ bool GraspFilter::filterGrasps(std::vector<moveit_msgs::Grasp>& possible_grasps,
   ROS_DEBUG_STREAM_NAMED("filter","Waiting to join " << num_threads << " ik threads...");
   bgroup.join_all(); // wait for all threads to finish
 
-  ROS_INFO_STREAM_NAMED("filter", "Filter complete, found " << filtered_grasps.size() << " ik solutions out of " <<
+  ROS_INFO_STREAM_NAMED("filter", "Grasp filter complete, found " << filtered_grasps.size() << " IK solutions out of " <<
     possible_grasps.size() );
 
   possible_grasps = filtered_grasps;
@@ -198,7 +198,7 @@ void GraspFilter::filterGraspThread(IkThreadStruct ik_thread_struct)
 
   std::vector<double> solution;
   moveit_msgs::MoveItErrorCodes error_code;
-  geometry_msgs::Pose ik_pose;
+  geometry_msgs::PoseStamped ik_pose;
 
   // Process the assigned grasps
   for( int i = ik_thread_struct.grasps_id_start_; i < ik_thread_struct.grasps_id_end_; ++i )
@@ -209,15 +209,15 @@ void GraspFilter::filterGraspThread(IkThreadStruct ik_thread_struct)
     solution.clear();
 
     // Transform current pose to frame of planning group
-    ik_pose = ik_thread_struct.possible_grasps_[i].grasp_pose.pose;
+    ik_pose = ik_thread_struct.possible_grasps_[i].grasp_pose;
     Eigen::Affine3d eigen_pose;
-    tf::poseMsgToEigen(ik_pose, eigen_pose);
+    tf::poseMsgToEigen(ik_pose.pose, eigen_pose);
     eigen_pose = ik_thread_struct.link_transform_ * eigen_pose;
-    tf::poseEigenToMsg(eigen_pose, ik_pose);
+    tf::poseEigenToMsg(eigen_pose, ik_pose.pose);
 
     // Test it with IK
     ik_thread_struct.kin_solver_->
-      searchPositionIK(ik_pose, ik_seed_state, ik_thread_struct.timeout_, solution, error_code);
+      searchPositionIK(ik_pose.pose, ik_seed_state, ik_thread_struct.timeout_, solution, error_code);
 
     // Results
     if( error_code.val == moveit_msgs::MoveItErrorCodes::SUCCESS )
@@ -235,13 +235,13 @@ void GraspFilter::filterGraspThread(IkThreadStruct ik_thread_struct)
 
         // Transform current pose to frame of planning group
         Eigen::Affine3d eigen_pose;
-        tf::poseMsgToEigen(ik_pose, eigen_pose);
+        tf::poseMsgToEigen(ik_pose.pose, eigen_pose);
         eigen_pose = ik_thread_struct.link_transform_ * eigen_pose;
-        tf::poseEigenToMsg(eigen_pose, ik_pose);
+        tf::poseEigenToMsg(eigen_pose, ik_pose.pose);
 
         // Test it with IK
         ik_thread_struct.kin_solver_->
-          searchPositionIK(ik_pose, ik_seed_state, ik_thread_struct.timeout_, solution, error_code);
+          searchPositionIK(ik_pose.pose, ik_seed_state, ik_thread_struct.timeout_, solution, error_code);
 
         // Results
         if( error_code.val == moveit_msgs::MoveItErrorCodes::NO_IK_SOLUTION )

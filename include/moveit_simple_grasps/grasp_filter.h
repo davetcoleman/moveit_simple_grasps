@@ -130,7 +130,7 @@ public:
 
   // Constructor
   GraspFilter( robot_state::RobotState robot_state, 
-    moveit_visual_tools::VisualToolsPtr visual_tools, const std::string& planning_group );
+    moveit_visual_tools::VisualToolsPtr& visual_tools, const std::string& planning_group );
 
   // Destructor
   ~GraspFilter();

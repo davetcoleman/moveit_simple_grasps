@@ -277,15 +277,15 @@ bool SimpleGrasps::generateAxisGrasps(
   return true;
 }
 
-geometry_msgs::Pose SimpleGrasps::getPreGraspPose(const moveit_msgs::Grasp &grasp, const std::string &ee_parent_link)
+geometry_msgs::PoseStamped SimpleGrasps::getPreGraspPose(const moveit_msgs::Grasp &grasp, const std::string &ee_parent_link)
 {
   // Grasp Pose Variables
-  geometry_msgs::Pose grasp_pose = grasp.grasp_pose.pose;
+  geometry_msgs::PoseStamped grasp_pose = grasp.grasp_pose;
   Eigen::Affine3d grasp_pose_eigen;
-  tf::poseMsgToEigen(grasp_pose, grasp_pose_eigen);
+  tf::poseMsgToEigen(grasp_pose.pose, grasp_pose_eigen);
 
   // Get pre-grasp pose first
-  geometry_msgs::Pose pre_grasp_pose;
+  geometry_msgs::PoseStamped pre_grasp_pose;
   Eigen::Affine3d pre_grasp_pose_eigen = grasp_pose_eigen; // Copy original grasp pose to pre-grasp pose
 
   // Approach direction variables
@@ -314,7 +314,10 @@ geometry_msgs::Pose SimpleGrasps::getPreGraspPose(const moveit_msgs::Grasp &gras
   pre_grasp_pose_eigen.translation() += pre_grasp_approach_direction_local;
 
   // Convert eigen pre-grasp position back to regular message
-  tf::poseEigenToMsg(pre_grasp_pose_eigen, pre_grasp_pose);
+  tf::poseEigenToMsg(pre_grasp_pose_eigen, pre_grasp_pose.pose);
+
+  // Copy original header to new grasp
+  pre_grasp_pose.header = grasp_pose.header;
 
   return pre_grasp_pose;
 }
