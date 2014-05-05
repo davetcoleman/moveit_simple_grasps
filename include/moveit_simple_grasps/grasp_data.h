@@ -75,10 +75,10 @@ public:
   /**
    * \brief Loads grasp data from a yaml file (load from roslaunch)
    * \param node handle - allows for namespacing
-   * \param side - TODO - specify from a yaml file with multiple end effectors which one to laod
+   * \param end effector name - which side of a two handed robot to load data for. should correspond to SRDF EE names
    * \return true on success
    */
-  bool loadRobotGraspData(const ros::NodeHandle& nh, const std::string& side);
+  bool loadRobotGraspData(const ros::NodeHandle& nh, const std::string& end_effector);
 
   /**
    * \brief Debug data to console

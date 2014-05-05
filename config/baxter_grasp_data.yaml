@@ -1,6 +1,6 @@
-end_effectors:
 # =====================================================
-  - end_effector_name: 'left_hand'  #ee group name
+left_hand:
+    end_effector_name: 'left_hand'  #ee group name
     base_link : 'base'
 
     #actuated joints in end effector
@@ -19,7 +19,8 @@ end_effectors:
 
     end_effector_parent_link: 'left_wrist'
 # =====================================================
-  - end_effector_name: 'right_hand'  #ee group name
+right_hand:
+    end_effector_name: 'right_hand'  #ee group name
     base_link : 'base'
 
     #actuated joints in end effector
