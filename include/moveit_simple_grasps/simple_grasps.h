@@ -106,6 +106,8 @@ public:
     std::vector<moveit_msgs::Grasp>& possible_grasps)
   {
     generateBlockGrasps(object_pose, grasp_data, possible_grasps);
+
+    return true;
   }
 
   /**
