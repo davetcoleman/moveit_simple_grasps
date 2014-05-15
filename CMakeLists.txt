@@ -1,9 +1,6 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(moveit_simple_grasps)
 
-find_package(Eigen REQUIRED)
-find_package(Boost REQUIRED thread system)
-
 # Load catkin and all dependencies required for this package
 find_package(catkin REQUIRED COMPONENTS
   roscpp
@@ -21,7 +18,11 @@ find_package(catkin REQUIRED COMPONENTS
   actionlib
   actionlib_msgs
   moveit_msgs
+  cmake_modules
 )
+
+find_package(Eigen REQUIRED)
+find_package(Boost REQUIRED thread system)
 
 add_message_files(DIRECTORY msg FILES
   GraspGeneratorOptions.msg
