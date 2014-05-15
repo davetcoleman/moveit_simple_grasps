@@ -102,6 +102,7 @@ namespace moveit_simple_grasps
         assert(false);
         break;
     }
+    return true;
   }
 
   class GraspGeneratorServer

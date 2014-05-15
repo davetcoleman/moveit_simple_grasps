@@ -217,7 +217,6 @@ bool GraspData::loadRobotGraspData(const ros::NodeHandle& nh, const std::string&
 
   // -------------------------------
   // SRDF Info
-  base_link_ = base_link_;
   ee_parent_link_ = end_effector_parent_link;
   ee_group_ = end_effector_name;
 
