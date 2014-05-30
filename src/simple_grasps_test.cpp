@@ -46,7 +46,6 @@
 #include <moveit_simple_grasps/simple_grasps.h>
 
 // Baxter specific properties
-#include <moveit_simple_grasps/grasp_data.h>
 #include <moveit_simple_grasps/custom_environment2.h>
 
 namespace baxter_pick_place
@@ -147,15 +146,10 @@ public:
   {
     // Position
     geometry_msgs::Pose start_object_pose;
-    geometry_msgs::Pose end_object_pose;
 
     start_object_pose.position.x = 0.4;
     start_object_pose.position.y = -0.2;
     start_object_pose.position.z = 0.0;
-
-    end_object_pose.position.x = 0.25;
-    end_object_pose.position.y = 0.15;
-    end_object_pose.position.z = 0.02;
 
     // Orientation
     double angle = M_PI / 1.5;
@@ -164,13 +158,6 @@ public:
     start_object_pose.orientation.y = quat.y();
     start_object_pose.orientation.z = quat.z();
     start_object_pose.orientation.w = quat.w();
-
-    angle = M_PI / 1.1;
-    quat = Eigen::Quaterniond(Eigen::AngleAxis<double>(double(angle), Eigen::Vector3d::UnitZ()));
-    end_object_pose.orientation.x = quat.x();
-    end_object_pose.orientation.y = quat.y();
-    end_object_pose.orientation.z = quat.z();
-    end_object_pose.orientation.w = quat.w();
 
     // Choose which object to test
     object_pose = start_object_pose;
