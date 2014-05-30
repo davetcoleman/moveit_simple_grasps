@@ -2,8 +2,8 @@
 Changelog for package moveit_simple_grasps
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.0.1 (2014-05-30)
+------------------
 * Moved base link out of individual end effector configurations
 * Fixed tests for new gripper config format
 * Fix for strict cppcheck and g++ warnings/errors

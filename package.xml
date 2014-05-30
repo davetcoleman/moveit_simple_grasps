@@ -1,6 +1,6 @@
 <package>
   <name>moveit_simple_grasps</name>
-  <version>1.0.0</version>
+  <version>1.0.1</version>
   <description>moveit_simple_grasps generates grasps for picking up simple objects</description>
   <maintainer email="davetcoleman@gmail.com">Dave Coleman</maintainer>
 
