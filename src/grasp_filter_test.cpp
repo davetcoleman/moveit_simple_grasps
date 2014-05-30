@@ -1,7 +1,7 @@
 /*********************************************************************
  * Software License Agreement (BSD License)
  *
- *  Copyright (c) 2013, University of Colorado, Boulder
+ *  Copyright (c) 2014, University of Colorado, Boulder
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -101,23 +101,26 @@ private:
 
   // which baxter arm are we using
   std::string arm_;
+  std::string ee_group_name_;
   std::string planning_group_name_;
 
 public:
 
   // Constructor
   GraspGeneratorTest(int num_tests) 
-    : nh_("~"),
-      arm_("right"),
-      planning_group_name_(arm_+"_arm")
+    : nh_("~")
   {
     nh_.param("arm", arm_, std::string("left"));
-    planning_group_name_ = arm_+"_arm";
-    ROS_INFO_STREAM_NAMED("temp","arm side is " << arm_);
+    nh_.param("ee_group_name", ee_group_name_, std::string(arm_ + "_hand"));
+    planning_group_name_ = arm_ + "_arm";
+
+    ROS_INFO_STREAM_NAMED("test","Arm: " << arm_);
+    ROS_INFO_STREAM_NAMED("test","End Effector: " << ee_group_name_);
+    ROS_INFO_STREAM_NAMED("test","Planning Group: " << planning_group_name_);
 
     // ---------------------------------------------------------------------------------------------
     // Load grasp data
-    if (!grasp_data_.loadRobotGraspData(nh_, arm_))
+    if (!grasp_data_.loadRobotGraspData(nh_, ee_group_name_))
       ros::shutdown();
 
     // ---------------------------------------------------------------------------------------------
@@ -136,7 +139,7 @@ public:
     //visual_tools_->removeAllCollisionObjects();
 
     // Create a collision table for fun
-    //visual_tools_->publishCollisionTable(TABLE_X, TABLE_Y, 0, TABLE_WIDTH, TABLE_HEIGHT, TABLE_DEPTH, "table");
+    visual_tools_->publishCollisionTable(TABLE_X, TABLE_Y, 0, TABLE_WIDTH, TABLE_HEIGHT, TABLE_DEPTH, "table");
 
     // ---------------------------------------------------------------------------------------------
     // Load grasp generator
