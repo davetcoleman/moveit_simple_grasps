@@ -1,7 +1,8 @@
+base_link: 'base'
+
 # =====================================================
 left_hand:
     end_effector_name: 'left_hand'  #ee group name
-    base_link : 'base'
 
     #actuated joints in end effector
     joints : ['left_gripper_l_finger_joint']
@@ -21,7 +22,6 @@ left_hand:
 # =====================================================
 right_hand:
     end_effector_name: 'right_hand'  #ee group name
-    base_link : 'base'
 
     #actuated joints in end effector
     joints : ['right_gripper_l_finger_joint']
