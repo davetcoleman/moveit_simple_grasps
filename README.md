@@ -33,6 +33,7 @@ A simple demo with Baxter:
 COMING SOON:
 ```
 sudo apt-get install ros-hydro-moveit-simple-grasps
+sudo apt-get install ros-indigo-moveit-simple-grasps
 ```
 
 ### Install From Source
