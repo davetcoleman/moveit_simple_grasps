@@ -1,15 +1,24 @@
-moveit_simple_grasps
+MoveIt! Simple Grasps
 ====================
 
-Note: this code is refactored and moved from [block_grasp_generator](https://github.com/davetcoleman/block_grasp_generator) to a more general library.
+A basic grasp generator for simple objects such as blocks or cylinders for use with the MoveIt! pick and place pipeline. Does not consider friction cones or other dynamics. 
 
-Generate basic grasp poses for simple objects such as blocks or cylinders for use with MoveIt! pick and place
+Its current implementation simple takes as input a pose vector (postition and orientation) and generates a large number of potential grasp approaches and directions. Also includes a grasp filter for removing kinematically infeasible grasps via threaded IK solvers.
 
-Developed by [Dave Coleman](http://dav.ee) at the Correll Robotics Lab, University of Colorado Boulder
+This package includes:
+
+ - Simple pose-based grasp generator for a block
+ - Separate grasp generators for custom objects such as rectanguar or cylindrical objects
+ - Grasp filter
+ - Test code and visualizations
+
+Developed by [Dave Coleman](http://dav.ee) at the Correll Robotics Lab, University of Colorado Boulder with outside contributors.
 
 <img align="right" src="https://raw.github.com/davetcoleman/moveit_simple_grasps/hydro-devel/resources/demo.png" /> 
 
 ## Video Demo
+
+A simple demo with Baxter:
 
 [![Baxter Grasp Test](http://img.youtube.com/vi/WEDITCR2qH4/0.jpg)](https://www.youtube.com/watch?v=WEDITCR2qH4)  
 
@@ -19,35 +28,152 @@ Developed by [Dave Coleman](http://dav.ee) at the Correll Robotics Lab, Universi
 
 ## Install
 
-This package depends on [moveit_visual_tools](https://github.com/davetcoleman/moveit_visual_tools)
+### Ubuntu Debian
+
+COMING SOON:
+```
+sudo apt-get install ros-hydro-moveit-simple-grasps
+```
+
+### Install From Source
+
+Clone this repository into a catkin workspace, then use the rosdep install tool to automatically download its dependencies. Depending on your current version of ROS, use:
+```
+rosdep install --from-paths src --ignore-src --rosdistro indigo
+```
+
+## Robot-Agnostic Configuration
+
+You will first need a configuration file that described your robot's end effector geometry. Currently an example format can be seen in this repository at [config/baxter_grasp_data.yaml](https://github.com/davetcoleman/moveit_simple_grasps/blob/hydro-devel/config/baxter_grasp_data.yaml). See the comments within that file for explanations. 
+
+To load that file at launch, you copy the example in the file [launch/grasp_test.launch](https://github.com/davetcoleman/moveit_simple_grasps/blob/hydro-devel/launch/grasp_test.launch) where you should see the line ``<rosparam command="load" file="$(find moveit_simple_grasps)/config/baxter_grasp_data.yaml"/>``.
+
+## Code Usage
+
+We will discuss how to use the generation, filtering, and visualization components.
+
+Within your robot's ROS package, add this package to your package.xml, CMakeLists.txt. Then in whatever C++ file add this to your includes:
+```
+// Grasp generation and visualization
+#include <moveit_simple_grasps/simple_grasps.h>
+#include <moveit_simple_grasps/grasp_data.h>
+#include <moveit_visual_tools/visual_tools.h>
+```
+
+Add to your class's member variables the following:
+```
+// Grasp generator
+moveit_simple_grasps::SimpleGraspsPtr simple_grasps_;
+
+// class for publishing stuff to rviz
+moveit_visual_tools::VisualToolsPtr visual_tools_;
+
+// robot-specific data for generating grasps
+moveit_simple_grasps::GraspData grasp_data_;
+```
+
+In your class' constructor initialize the visualization tools;
+```
+// Load the Robot Viz Tools for publishing to Rviz
+visual_tools_.reset(new moveit_visual_tools::VisualTools("base_link"));
+```
+Change the first parameter of visual tools to the name of your robot's base link. For more information on that package, see [moveit_visual_tools](https://github.com/davetcoleman/moveit_visual_tools).
+
+Then load your robot's custom .yaml grasp data file:
+```
+// Load grasp data specific to our robot
+ros::NodeHandle nh("~");
+if (!grasp_data_.loadRobotGraspData(nh, "left_hand"))
+  ros::shutdown();
+```
+Where "left_hand" is the name of one your SRDF-defined MoveIt! end effectors from the Setup Assistant. This data is loaded from a file that you must load to the parameter server within a roslaunch file, as desribed above.
+
+Now load grasp generator:
+```
+// Load grasp generator
+simple_grasps_.reset( new moveit_simple_grasps::SimpleGrasps(visual_tools_) );
+```
+
+To generate grasps, you first need the pose of the object you want to grasp, such as a block. Here's an example pose:
+```
+geometry_msgs::Pose object_pose;
+object_pose.position.x = 0.4;
+object_pose.position.y = -0.2;
+object_pose.position.z = 0.0;
+
+// Orientation
+double angle = M_PI / 1.5;
+Eigen::Quaterniond quat(Eigen::AngleAxis<double>(double(angle), Eigen::Vector3d::UnitZ()));
+object_pose.orientation.x = quat.x();
+object_pose.orientation.y = quat.y();
+object_pose.orientation.z = quat.z();
+object_pose.orientation.w = quat.w();
+```
+
+If you want to visualize this object pose as a block:
+```
+visual_tools_->publishBlock(object_pose, moveit_visual_tools::BLUE, 0.04);
+```
+
+Now generate the grasps:
+```
+std::vector<moveit_msgs::Grasp> possible_grasps;
+simple_grasps_->generateBlockGrasps( object_pose, grasp_data_, possible_grasps);
+```
+
+To visualize:
+```
+visual_tools_->publishAnimatedGrasps(possible_grasps, grasp_data_.ee_parent_link_);
+```
+
+## Grasp Filter Usage
+
+This component creates several threads and tests a large number of potential grasps for kinematic feasibility.
+
+<img align="right" src="https://raw.github.com/davetcoleman/moveit_simple_grasps/hydro-devel/resources/filter.png" />
+
+To filter grasps after generating them:
+```
+// Filter the grasp for only the ones that are reachable
+bool filter_pregrasps = true;
+std::vector<trajectory_msgs::JointTrajectoryPoint> ik_solutions; // save each grasps ik solution for visualization
+grasp_filter_->filterGrasps(possible_grasps, ik_solutions, filter_pregrasps, grasp_data_.ee_parent_link_, planning_group_name_);
+```
+
+To view the filtered grasps along with the planning group pose:
+```
+visual_tools_->publishIKSolutions(ik_solutions, planning_group_name_, 0.25);
+```
+
+There is more that is undocumented but I'm tired of writing this.
 
 ## Tested Robots
 
- - [Baxter](https://github.com/davetcoleman/baxter)
- - [ClamArm](https://github.com/davetcoleman/clam)
+ - [Baxter](https://github.com/davetcoleman/baxter_cpp)
  - [REEM](http://wiki.ros.org/Robots/REEM)
 
 ## Testing and Example Code
 
-There are currently test scripts and examples in:
+There are two tests scripts in this package. To view the tests, first start Rviz with:
 
- - [baxter_pick_place](https://github.com/davetcoleman/baxter/tree/hydro-devel/baxter_pick_place)
- - [reem_tabletop_grasping](https://github.com/pal-robotics/reem_tabletop_grasping).
+```
+roslaunch moveit_simple_grasps grasp_test_rviz.launch
+```
 
-## Grasp Filter
+To test just grasp generation for randomly placed blocks:
+```
+roslaunch moveit_simple_grasps grasp_test.launch 
+```
 
-Creates several threads and tests a large number of potential grasps for kinematic feasibility.
-
-<img align="right" src="https://raw.github.com/davetcoleman/moveit_simple_grasps/hydro-devel/resources/filter.png" />
-
-To run the grasp filter test, add:
- - a MotionPlanning display to Rviz with the 'Planned Path' section having the 'Show Robot Visual' checkbox checked
- - a Marker display to Rviz subscribed to ``/end_effector_marker``
- - Run 
-
+To also test the IK grasp filtering:
 ```
 roslaunch moveit_simple_grasps grasp_filter_test.launch
 ```
+
+There is currently example implementations;
+
+ - [baxter_pick_place](https://github.com/davetcoleman/baxter_cpp/tree/hydro-devel/baxter_pick_place)
+ - [reem_tabletop_grasping](https://github.com/pal-robotics/reem_tabletop_grasping).
 
 ## Contributors
 
