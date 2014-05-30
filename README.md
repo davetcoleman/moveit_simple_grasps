@@ -9,6 +9,10 @@ Developed by [Dave Coleman](http://dav.ee) at the Correll Robotics Lab, Universi
 
 <img align="right" src="https://raw.github.com/davetcoleman/moveit_simple_grasps/hydro-devel/resources/demo.png" />
 
+## Video Demo
+
+[![Baxter Grasp Test](http://img.youtube.com/vi/WEDITCR2qH4/0.jpg)](https://www.youtube.com/watch?v=WEDITCR2qH4)
+
 ## Build Status
 
 [![Build Status](https://travis-ci.org/davetcoleman/moveit_simple_grasps.png?branch=hydro-devel)](https://travis-ci.org/davetcoleman/moveit_simple_grasps)
