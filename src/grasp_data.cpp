@@ -71,21 +71,21 @@ bool GraspData::loadRobotGraspData(const ros::NodeHandle& nh, const std::string&
   std::string end_effector_name;
   std::string end_effector_parent_link;
 
+  // Load a param
+  if (!nh.hasParam("base_link"))
+  {
+    ROS_ERROR_STREAM_NAMED("grasp_data_loader","Grasp configuration parameter `base_link` missing from rosparam server. Did you load your end effector's configuration yaml file? Searching in namespace: " << nh.getNamespace());
+    return false;
+  }
+  nh.getParam("base_link", base_link_);
+
   // Search within the sub-namespace of this end effector name
   ros::NodeHandle child_nh(nh, end_effector);
 
   // Load a param
-  if (!child_nh.hasParam("base_link"))
-  {
-    ROS_ERROR_STREAM_NAMED("grasp_data_loader","Grasp configuration parameter `base_link` missing from rosparam server. Did you load your end effector's configuration yaml file? Searching in namespace: " << child_nh.getNamespace());
-    return false;
-  }
-  child_nh.getParam("base_link", base_link_);
-
-  // Load a param
   if (!child_nh.hasParam("pregrasp_time_from_start"))
   {
-    ROS_ERROR_STREAM_NAMED("grasp_data_loader","Grasp configuration parameter `pregrasp_time_from_start` missing from rosparam server. Did you load your end effector's configuration yaml file?");
+    ROS_ERROR_STREAM_NAMED("grasp_data_loader","Grasp configuration parameter `pregrasp_time_from_start` missing from rosparam server. Did you load your end effector's configuration yaml file? Searching in namespace: " << child_nh.getNamespace());
     return false;
   }
   child_nh.getParam("pregrasp_time_from_start", pregrasp_time_from_start);
