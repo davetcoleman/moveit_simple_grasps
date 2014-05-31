@@ -1,7 +1,10 @@
 <package>
   <name>moveit_simple_grasps</name>
   <version>1.0.1</version>
-  <description>moveit_simple_grasps generates grasps for picking up simple objects</description>
+  <description>
+    A basic grasp generator for simple objects such as blocks or cylinders for use with the MoveIt! pick and place pipeline. 
+    Does not consider friction cones or other dynamics.
+  </description>
   <maintainer email="davetcoleman@gmail.com">Dave Coleman</maintainer>
 
   <license>BSD</license>
