@@ -31,14 +31,24 @@ A simple demo with Baxter:
 ### Ubuntu Debian
 
 COMING SOON:
+Hydro:
 ```
 sudo apt-get install ros-hydro-moveit-simple-grasps
+```
+Indigo:
+```
 sudo apt-get install ros-indigo-moveit-simple-grasps
 ```
 
 ### Install From Source
 
 Clone this repository into a catkin workspace, then use the rosdep install tool to automatically download its dependencies. Depending on your current version of ROS, use:
+
+Hydro:
+```
+rosdep install --from-paths src --ignore-src --rosdistro hydro
+```
+Indigo:
 ```
 rosdep install --from-paths src --ignore-src --rosdistro indigo
 ```
