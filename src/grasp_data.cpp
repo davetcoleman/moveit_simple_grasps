@@ -66,6 +66,7 @@ bool GraspData::loadRobotGraspData(const ros::NodeHandle& nh, const std::string&
   std::vector<double> pre_grasp_posture; // todo: remove all underscore post-fixes
   std::vector<double> grasp_posture;
   std::vector<double> grasp_pose_to_eef;
+  std::vector<double> grasp_pose_to_eef_rotation;
   double pregrasp_time_from_start;
   double grasp_time_from_start;
   std::string end_effector_name;
@@ -174,12 +175,35 @@ bool GraspData::loadRobotGraspData(const ros::NodeHandle& nh, const std::string&
       grasp_pose_to_eef.push_back(static_cast<double>(g_to_eef_list[i]));
   }
 
+  ROS_ASSERT(child_nh.hasParam("grasp_pose_to_eef_rotation"));
+  XmlRpc::XmlRpcValue g_to_eef_rotation_list;
+  child_nh.getParam("grasp_pose_to_eef_rotation", g_to_eef_rotation_list);
+  ROS_ASSERT(g_to_eef_rotation_list.getType() == XmlRpc::XmlRpcValue::TypeArray);
+  for (int32_t i = 0; i < g_to_eef_rotation_list.size(); ++i)
+  {
+    // Cast to double OR int
+    if (g_to_eef_rotation_list[i].getType() != XmlRpc::XmlRpcValue::TypeDouble)
+    {
+      if (g_to_eef_rotation_list[i].getType() != XmlRpc::XmlRpcValue::TypeInt )
+      {
+        ROS_ERROR_STREAM_NAMED("grasp_data_loader","Grasp configuration parameter `grasp_pose_to_eef_rotation` wrong data type - int or double required.");
+        return false;
+      }
+      else
+        grasp_pose_to_eef_rotation.push_back(static_cast<int>(g_to_eef_rotation_list[i]));
+    }
+    else
+      grasp_pose_to_eef_rotation.push_back(static_cast<double>(g_to_eef_rotation_list[i]));
+  }
+
   // -------------------------------
   // Convert generic grasp pose to this end effector's frame of reference, approach direction for short
 
   // Orientation
-  double angle = M_PI / 2;  // turn on Z axis //TODO parametrize this
-  Eigen::Quaterniond quat(Eigen::AngleAxis<double>(double(angle), Eigen::Vector3d::UnitY()));
+  ROS_ASSERT(grasp_pose_to_eef_rotation.size() == 3);
+  Eigen::Quaterniond quat(Eigen::AngleAxis<double>(double(grasp_pose_to_eef_rotation[1]), Eigen::Vector3d::UnitY())); // turn on Z axis
+  // TODO: rotate for roll and yaw also, not just pitch (unit y)
+  // but i don't need that feature right now and it might be tricky
   grasp_pose_to_eef_pose_.orientation.x = quat.x();
   grasp_pose_to_eef_pose_.orientation.y = quat.y();
   grasp_pose_to_eef_pose_.orientation.z = quat.z();

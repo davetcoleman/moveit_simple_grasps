@@ -190,7 +190,7 @@ bool SimpleGrasps::generateAxisGrasps(
 
 
     // DEBUG - show original grasp pose before tranform to gripper frame
-    if( false )
+    if( true )
     {
       tf::poseEigenToMsg(object_global_transform_ * grasp_pose, grasp_pose_msg.pose);
       visual_tools_->publishArrow(grasp_pose_msg.pose, moveit_visual_tools::GREEN);
