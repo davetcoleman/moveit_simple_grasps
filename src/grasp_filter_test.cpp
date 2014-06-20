@@ -110,6 +110,7 @@ public:
   GraspGeneratorTest(int num_tests) 
     : nh_("~")
   {
+    // Get arm info from param server
     nh_.param("arm", arm_, std::string("left"));
     nh_.param("ee_group_name", ee_group_name_, std::string(arm_ + "_hand"));
     planning_group_name_ = arm_ + "_arm";
