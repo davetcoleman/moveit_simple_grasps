@@ -51,6 +51,8 @@ To load that file at launch, you copy the example in the file [launch/grasp_test
 
 ## Code Usage
 
+Note: You might find the moveit_blocks.h example, discussed at the bottom of this page, most helpful.
+
 We will discuss how to use the generation, filtering, and visualization components.
 
 Within your robot's ROS package, add this package to your package.xml, CMakeLists.txt. Then in whatever C++ file add this to your includes:
@@ -153,7 +155,17 @@ There is more that is undocumented but I'm tired of writing this.
  - [Baxter](https://github.com/davetcoleman/baxter_cpp)
  - [REEM](http://wiki.ros.org/Robots/REEM)
 
-## Testing and Example Code
+## Example Code
+
+A new (still in development) example tool is ``moveit_blocks.h`` located in the ``include`` folder. It gives you a complete pick and place pipeline using this package and MoveIt, and all you need is the appropriate config file and launch file. An example launch file can be found [here](https://github.com/davetcoleman/clam/blob/master/clam_pick_place/launch/pick_place.launch).
+
+There are currently example implementations:
+
+ - [baxter_pick_place](https://github.com/davetcoleman/baxter_cpp/tree/hydro-devel/baxter_pick_place)
+ - [reem_tabletop_grasping](https://github.com/pal-robotics/reem_tabletop_grasping)
+ - [clam_pick_place](https://github.com/davetcoleman/clam/tree/master/clam_pick_place)
+
+## Testing
 
 There are two tests scripts in this package. To view the tests, first start Rviz with:
 
@@ -170,11 +182,6 @@ To also test the IK grasp filtering:
 ```
 roslaunch moveit_simple_grasps grasp_filter_test.launch
 ```
-
-There is currently example implementations;
-
- - [baxter_pick_place](https://github.com/davetcoleman/baxter_cpp/tree/hydro-devel/baxter_pick_place)
- - [reem_tabletop_grasping](https://github.com/pal-robotics/reem_tabletop_grasping).
 
 ## Contributors
 
