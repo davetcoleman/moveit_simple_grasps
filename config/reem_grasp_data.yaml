@@ -13,6 +13,10 @@ right_hand:
 
   #desired pose from end effector to grasp
   grasp_pose_to_eef : [0.054, 0.0, 0.018]
+
+  #desired pose from end effector to grasp - [r, p, y]
+  grasp_pose_to_eef_rotation : [0, 1.5708, 0] # 1.5707 = PI/2
+
   end_effector_parent_link: 'right_hand_grasping_frame'
 # =====================================================
 left_hand:
@@ -27,5 +31,9 @@ left_hand:
 
   #desired pose from end effector to grasp
   grasp_pose_to_eef : [0.054, 0.0, 0.018]
+
+  #desired pose from end effector to grasp - [r, p, y]
+  grasp_pose_to_eef_rotation : [0, 1.5708, 0] # 1.5707 = PI/2
+
   end_effector_parent_link: 'left_hand_grasping_frame'
 

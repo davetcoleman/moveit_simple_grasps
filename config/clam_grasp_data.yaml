@@ -18,4 +18,7 @@ gripper_group: # ee group name
   #desired pose from end effector to grasp - [x,y,z]
   grasp_pose_to_eef : [-0.14,0,0]
 
+  #desired pose from end effector to grasp - [r, p, y]
+  grasp_pose_to_eef_rotation : [0, 0, 0] # 1.5707 = PI/2
+
   end_effector_parent_link : 'gripper_roll_link'
