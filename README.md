@@ -30,7 +30,6 @@ A simple demo with Baxter:
 
 ### Ubuntu Debian
 
-COMING SOON:
 Hydro:
 ```
 sudo apt-get install ros-hydro-moveit-simple-grasps
