@@ -2,6 +2,17 @@
 Changelog for package moveit_simple_grasps
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fixed grasp pose rotation
+* Created new verbose constructor flag to enable easy debugging
+* Allow a grasp pose to be rotated along z axis
+* Created new pick place pipeline template
+* Moved ClamArm config to this repo
+* Updated package description
+* Updated README
+* Contributors: Dave Coleman
+
 1.0.1 (2014-05-30)
 ------------------
 * Moved base link out of individual end effector configurations
