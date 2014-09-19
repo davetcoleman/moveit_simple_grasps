@@ -2,6 +2,9 @@
 Changelog for package moveit_simple_grasps
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 1.1.0 (2014-07-31)
 ------------------
 * Fixed grasp pose rotation
