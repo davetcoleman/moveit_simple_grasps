@@ -192,6 +192,21 @@ To also test the IK grasp filtering:
 roslaunch moveit_simple_grasps grasp_filter_test.launch
 ```
 
+## TODO
+
+Features we'd like to see added to this project:
+
+ - Ability to reason about any shape, not just centroid of a bounding box
+   - Input arbitrary meshes
+   - Auto create a bounding box around that mesh
+ - Better reasoning about support surfaces (table)
+ - Integrate collision checking to verify feasibility of grasp
+ - Support non-parallel gripper end effectors
+ - Make grasp quality metric better informed
+ - Make this project easier to setup for new robots
+   - Integrate into Setup Assistant GUI
+ - Improve simple pick and place pipline header file
+
 ## Contributors
 
  - Dave Coleman, CU Boulder @davetcoleman
