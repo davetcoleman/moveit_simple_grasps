@@ -9,9 +9,9 @@
 
   <license>BSD</license>
 
-  <url type="website">https://github.com/davetcoleman/simple_grasps/</url>
-  <url type="bugtracker">https://github.com/davetcoleman/simple_grasps/issues</url>
-  <url type="repository">https://github.com/davetcoleman/simple_grasps</url>
+  <url type="website">https://github.com/davetcoleman/moveit_simple_grasps/</url>
+  <url type="bugtracker">https://github.com/davetcoleman/moveit_simple_grasps/issues</url>
+  <url type="repository">https://github.com/davetcoleman/moveit_simple_grasps</url>
 
   <author email="davetcoleman@gmail.com">Dave Coleman</author>
 
