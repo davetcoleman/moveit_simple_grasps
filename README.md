@@ -69,7 +69,7 @@ Within your robot's ROS package, add this package to your package.xml, CMakeList
 // Grasp generation and visualization
 #include <moveit_simple_grasps/simple_grasps.h>
 #include <moveit_simple_grasps/grasp_data.h>
-#include <moveit_visual_tools/visual_tools.h>
+#include <moveit_visual_tools/moveit_visual_tools.h>
 ```
 
 Add to your class's member variables the following:
@@ -78,7 +78,7 @@ Add to your class's member variables the following:
 moveit_simple_grasps::SimpleGraspsPtr simple_grasps_;
 
 // class for publishing stuff to rviz
-moveit_visual_tools::VisualToolsPtr visual_tools_;
+moveit_visual_tools::MoveItVisualToolsPtr visual_tools_;
 
 // robot-specific data for generating grasps
 moveit_simple_grasps::GraspData grasp_data_;
@@ -87,7 +87,7 @@ moveit_simple_grasps::GraspData grasp_data_;
 In your class' constructor initialize the visualization tools;
 ```
 // Load the Robot Viz Tools for publishing to Rviz
-visual_tools_.reset(new moveit_visual_tools::VisualTools("base_link"));
+visual_tools_.reset(new moveit_visual_tools::MoveItVisualTools("base_link"));
 ```
 Change the first parameter of visual tools to the name of your robot's base link. For more information on that package, see [moveit_visual_tools](https://github.com/davetcoleman/moveit_visual_tools).
 
@@ -124,7 +124,7 @@ object_pose.orientation.w = quat.w();
 
 If you want to visualize this object pose as a block:
 ```
-visual_tools_->publishBlock(object_pose, moveit_visual_tools::BLUE, 0.04);
+visual_tools_->publishBlock(object_pose, rviz_visual_tools::BLUE, 0.04);
 ```
 
 Now generate the grasps:

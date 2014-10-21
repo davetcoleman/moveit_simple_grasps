@@ -46,7 +46,7 @@
 // Grasp generation
 #include <moveit_simple_grasps/simple_grasps.h>
 #include <moveit_simple_grasps/grasp_data.h>
-#include <moveit_visual_tools/visual_tools.h> // simple tool for showing graspsp
+#include <moveit_visual_tools/moveit_visual_tools.h> // simple tool for showing graspsp
 
 namespace moveit_simple_grasps
 {
@@ -67,7 +67,7 @@ public:
   // grasp generator
   moveit_simple_grasps::SimpleGraspsPtr simple_grasps_;
 
-  moveit_visual_tools::VisualToolsPtr visual_tools_;
+  moveit_visual_tools::MoveItVisualToolsPtr visual_tools_;
 
   // data for generating grasps
   moveit_simple_grasps::GraspData grasp_data_;
@@ -111,7 +111,7 @@ public:
       ros::shutdown();
 
     // Load the Robot Viz Tools for publishing to rviz
-    visual_tools_.reset(new moveit_visual_tools::VisualTools( grasp_data_.base_link_));
+    visual_tools_.reset(new moveit_visual_tools::MoveItVisualTools( grasp_data_.base_link_));
     visual_tools_->setFloorToBaseHeight(-0.9);
     visual_tools_->loadEEMarker(grasp_data_.ee_group_, planning_group_name_);
 
@@ -186,7 +186,7 @@ public:
             ROS_INFO_STREAM_NAMED("pick_place","Picking '" << blocks[block_id].name << "'");
 
             // Visualize the block we are about to pick
-            visual_tools_->publishBlock( blocks[block_id].start_pose, moveit_visual_tools::BLUE, BLOCK_SIZE);
+            visual_tools_->publishBlock( blocks[block_id].start_pose, rviz_visual_tools::BLUE, BLOCK_SIZE);
 
             if( !pick(blocks[block_id].start_pose, blocks[block_id].name) )
             {
@@ -212,7 +212,7 @@ public:
             ROS_INFO_STREAM_NAMED("pick_place","Placing '" << blocks[block_id].name << "'");
 
             // Publish goal block location
-            visual_tools_->publishBlock( blocks[block_id].goal_pose, moveit_visual_tools::BLUE, BLOCK_SIZE);
+            visual_tools_->publishBlock( blocks[block_id].goal_pose, rviz_visual_tools::BLUE, BLOCK_SIZE);
 
             if( !place(blocks[block_id].goal_pose, blocks[block_id].name) )
             {
@@ -363,7 +363,7 @@ public:
 
       place_loc.place_pose = pose_stamped;
 
-      visual_tools_->publishBlock( place_loc.place_pose.pose, moveit_visual_tools::BLUE, BLOCK_SIZE);
+      visual_tools_->publishBlock( place_loc.place_pose.pose, rviz_visual_tools::BLUE, BLOCK_SIZE);
 
       // Approach
       moveit_msgs::GripperTranslation pre_place_approach;

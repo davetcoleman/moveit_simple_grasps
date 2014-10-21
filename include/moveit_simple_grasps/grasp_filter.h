@@ -49,7 +49,7 @@
 #include <moveit_simple_grasps/simple_grasps.h>
 
 // Rviz
-#include <moveit_visual_tools/visual_tools.h>
+#include <moveit_visual_tools/moveit_visual_tools.h>
 
 // MoveIt
 #include <moveit/robot_state/robot_state.h>
@@ -119,7 +119,7 @@ private:
   std::map<std::string, std::vector<kinematics::KinematicsBaseConstPtr> > kin_solvers_;
 
   // class for publishing stuff to rviz
-  moveit_visual_tools::VisualToolsPtr visual_tools_;
+  moveit_visual_tools::MoveItVisualToolsPtr visual_tools_;
 
   bool verbose_;
 
@@ -127,7 +127,7 @@ public:
 
   // Constructor
   GraspFilter( robot_state::RobotState robot_state, 
-    moveit_visual_tools::VisualToolsPtr& visual_tools );
+    moveit_visual_tools::MoveItVisualToolsPtr& visual_tools );
 
   // Destructor
   ~GraspFilter();

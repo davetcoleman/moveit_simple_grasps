@@ -57,7 +57,7 @@
 #include <eigen_conversions/eigen_msg.h>
 
 // Visualization
-#include <moveit_visual_tools/visual_tools.h>
+#include <moveit_visual_tools/moveit_visual_tools.h>
 
 // C++
 #include <math.h>
@@ -81,7 +81,7 @@ class SimpleGrasps
 private:
 
   // class for publishing stuff to rviz
-  moveit_visual_tools::VisualToolsPtr visual_tools_;
+  moveit_visual_tools::MoveItVisualToolsPtr visual_tools_;
 
   // Transform from frame of box to global frame
   Eigen::Affine3d object_global_transform_;
@@ -95,7 +95,7 @@ public:
   /**
    * \brief Constructor
    */
-  SimpleGrasps(moveit_visual_tools::VisualToolsPtr rviz_tools, bool verbose = false);
+  SimpleGrasps(moveit_visual_tools::MoveItVisualToolsPtr rviz_tools, bool verbose = false);
 
   /**
    * \brief Destructor
