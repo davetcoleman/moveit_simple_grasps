@@ -63,7 +63,7 @@ private:
   moveit_simple_grasps::SimpleGraspsPtr simple_grasps_;
 
   // class for publishing stuff to rviz
-  moveit_visual_tools::VisualToolsPtr visual_tools_;
+  moveit_visual_tools::MoveItVisualToolsPtr visual_tools_;
 
   // robot-specific data for generating grasps
   moveit_simple_grasps::GraspData grasp_data_;
@@ -94,7 +94,7 @@ public:
 
     // ---------------------------------------------------------------------------------------------
     // Load the Robot Viz Tools for publishing to Rviz
-    visual_tools_.reset(new moveit_visual_tools::VisualTools(grasp_data_.base_link_));
+    visual_tools_.reset(new moveit_visual_tools::MoveItVisualTools(grasp_data_.base_link_));
     visual_tools_->setLifetime(120.0);
     visual_tools_->setMuted(false);
     visual_tools_->loadEEMarker(grasp_data_.ee_group_, planning_group_name_);
@@ -124,7 +124,7 @@ public:
         generateRandomObject(object_pose);
 
       // Show the block
-      visual_tools_->publishBlock(object_pose, moveit_visual_tools::BLUE, BLOCK_SIZE);
+      visual_tools_->publishBlock(object_pose, rviz_visual_tools::BLUE, BLOCK_SIZE);
 
       possible_grasps.clear();
 

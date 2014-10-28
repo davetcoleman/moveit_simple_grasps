@@ -43,7 +43,7 @@ namespace moveit_simple_grasps
 
 // Constructor
 GraspFilter::GraspFilter( robot_state::RobotState robot_state,
-  moveit_visual_tools::VisualToolsPtr& visual_tools ):
+  moveit_visual_tools::MoveItVisualToolsPtr& visual_tools ):
   robot_state_(robot_state),
   visual_tools_(visual_tools),
   verbose_(false)

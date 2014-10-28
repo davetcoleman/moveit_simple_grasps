@@ -38,7 +38,7 @@ namespace moveit_simple_grasps
 {
 
 // Constructor
-SimpleGrasps::SimpleGrasps(moveit_visual_tools::VisualToolsPtr visual_tools, bool verbose) :
+SimpleGrasps::SimpleGrasps(moveit_visual_tools::MoveItVisualToolsPtr visual_tools, bool verbose) :
   visual_tools_(visual_tools),
   verbose_(verbose)
 {
@@ -194,7 +194,7 @@ bool SimpleGrasps::generateAxisGrasps(
     if( verbose_ )
     {
       tf::poseEigenToMsg(object_global_transform_ * grasp_pose, grasp_pose_msg.pose);
-      visual_tools_->publishArrow(grasp_pose_msg.pose, moveit_visual_tools::GREEN);
+      visual_tools_->publishArrow(grasp_pose_msg.pose, rviz_visual_tools::GREEN);
     }
 
     // ------------------------------------------------------------------------

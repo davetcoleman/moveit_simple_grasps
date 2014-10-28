@@ -59,7 +59,7 @@
 // Grasp 
 #include <moveit_simple_grasps/simple_grasps.h>
 #include <moveit_simple_grasps/grasp_filter.h>
-#include <moveit_visual_tools/visual_tools.h>
+#include <moveit_visual_tools/moveit_visual_tools.h>
 
 // Baxter specific properties
 #include <moveit_simple_grasps/grasp_data.h>
@@ -88,7 +88,7 @@ private:
   moveit_simple_grasps::SimpleGraspsPtr simple_grasps_;
 
   // Tool for visualizing things in Rviz
-  moveit_visual_tools::VisualToolsPtr visual_tools_;
+  moveit_visual_tools::MoveItVisualToolsPtr visual_tools_;
 
   // Grasp filter
   moveit_simple_grasps::GraspFilterPtr grasp_filter_;
@@ -130,7 +130,7 @@ public:
 
     // ---------------------------------------------------------------------------------------------
     // Load the Robot Viz Tools for publishing to Rviz
-    visual_tools_.reset(new moveit_visual_tools::VisualTools(grasp_data_.base_link_, "/end_effector_marker", planning_scene_monitor_));
+    visual_tools_.reset(new moveit_visual_tools::MoveItVisualTools(grasp_data_.base_link_, "/end_effector_marker", planning_scene_monitor_));
     visual_tools_->setLifetime(40.0);
     visual_tools_->setMuted(false);
     visual_tools_->loadEEMarker(grasp_data_.ee_group_, planning_group_name_);
@@ -169,7 +169,7 @@ public:
         generateRandomObject(object_pose);
 
       // Show the block
-      visual_tools_->publishBlock(object_pose, moveit_visual_tools::BLUE, BLOCK_SIZE);
+      visual_tools_->publishBlock(object_pose, rviz_visual_tools::BLUE, BLOCK_SIZE);
 
       possible_grasps.clear();
       ik_solutions.clear();
