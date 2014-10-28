@@ -97,19 +97,37 @@ public:
     visual_tools_.reset(new moveit_visual_tools::MoveItVisualTools(grasp_data_.base_link_));
     visual_tools_->setLifetime(120.0);
     visual_tools_->setMuted(false);
-    visual_tools_->loadEEMarker(grasp_data_.ee_group_, planning_group_name_);
+    visual_tools_->loadMarkerPub();
 
     // ---------------------------------------------------------------------------------------------
     // Load grasp generator
     simple_grasps_.reset( new moveit_simple_grasps::SimpleGrasps(visual_tools_) );
 
+    geometry_msgs::Pose pose;
+    visual_tools_->generateEmptyPose(pose);
+
+    // ---------------------------------------------------------------------------------------------
+    // Animate open and closing end effector
+
+    for (std::size_t i = 0; i < 4; ++i)
+    {
+      // Test visualization of end effector in OPEN position
+      grasp_data_.setRobotStatePreGrasp( visual_tools_->getSharedRobotState() );
+      visual_tools_->loadEEMarker(grasp_data_.ee_group_, planning_group_name_);
+      visual_tools_->publishEEMarkers(pose, rviz_visual_tools::ORANGE, "test_eef");
+      ros::Duration(1.0).sleep();
+
+      // Test visualization of end effector in CLOSED position
+      grasp_data_.setRobotStateGrasp( visual_tools_->getSharedRobotState() );
+      visual_tools_->loadEEMarker(grasp_data_.ee_group_, planning_group_name_);
+      visual_tools_->publishEEMarkers(pose, rviz_visual_tools::GREEN, "test_eef");
+      ros::Duration(1.0).sleep();      
+    }
+
     // ---------------------------------------------------------------------------------------------
     // Generate grasps for a bunch of random objects
     geometry_msgs::Pose object_pose;
     std::vector<moveit_msgs::Grasp> possible_grasps;
-
-    // Allow ROS to catchup
-    ros::Duration(2.0).sleep();
 
     // Loop
     int i = 0;

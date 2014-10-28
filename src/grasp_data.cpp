@@ -260,6 +260,30 @@ bool GraspData::loadRobotGraspData(const ros::NodeHandle& nh, const std::string&
   return true;
 }
 
+bool GraspData::setRobotStatePreGrasp( robot_state::RobotStatePtr &robot_state )
+{
+  return setRobotState( robot_state, pre_grasp_posture_ );
+}
+bool GraspData::setRobotStateGrasp( robot_state::RobotStatePtr &robot_state )
+{
+  return setRobotState( robot_state, grasp_posture_ );
+}
+
+bool GraspData::setRobotState( robot_state::RobotStatePtr &robot_state, const trajectory_msgs::JointTrajectory &posture )
+{
+  // Do for every joint in end effector
+  for (std::size_t i = 0; i < posture.joint_names.size(); ++i)
+  {
+    // Debug
+    std::cout << "Setting joint " << posture.joint_names[i] << " to value " 
+              << posture.points[i].positions[0] << std::endl;
+
+    // Set joint position
+    robot_state->setJointPositions( posture.joint_names[i],
+                                    posture.points[i].positions );
+  }
+}
+
 void GraspData::print()
 {
   ROS_WARN_STREAM_NAMED("grasp_data","Debug Grasp Data variable values:");
