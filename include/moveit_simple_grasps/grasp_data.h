@@ -46,6 +46,7 @@
 // Msgs
 #include <geometry_msgs/Pose.h>
 #include <trajectory_msgs/JointTrajectory.h>
+#include <moveit/robot_state/robot_state.h>
 
 namespace moveit_simple_grasps
 {
@@ -79,6 +80,28 @@ public:
    * \return true on success
    */
   bool loadRobotGraspData(const ros::NodeHandle& nh, const std::string& end_effector);
+
+  /**
+   * \brief Alter a robot state so that the end effector corresponding to this grasp data is in pre-grasp state (OPEN)
+   * \param joint state of robot
+   * \return true on success
+   */
+  bool setRobotStatePreGrasp( robot_state::RobotStatePtr &robot_state );
+
+  /**
+   * \brief Alter a robot state so that the end effector corresponding to this grasp data is in grasp state (CLOSED)
+   * \param joint state of robot
+   * \return true on success
+   */
+  bool setRobotStateGrasp( robot_state::RobotStatePtr &robot_state );
+
+  /**
+   * \brief Alter a robot state so that the end effector corresponding to this grasp data is in a grasp posture
+   * \param joint state of robot
+   * \param posture - what state to set the end effector
+   * \return true on success
+   */
+  bool setRobotState( robot_state::RobotStatePtr &robot_state, const trajectory_msgs::JointTrajectory &posture );
 
   /**
    * \brief Debug data to console
