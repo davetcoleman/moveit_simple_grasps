@@ -2,6 +2,13 @@
 Changelog for package moveit_simple_grasps
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Refactored for new moveit_visual_tools API
+* Fixed package.xml
+* Updated README
+* Contributors: Dave Coleman
+
 1.2.0 (2014-09-19)
 ------------------
 
