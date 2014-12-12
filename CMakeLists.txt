@@ -78,12 +78,6 @@ target_link_libraries(${PROJECT_NAME}_filter
   ${catkin_LIBRARIES} ${Boost_LIBRARIES}
 )
 
-# Test executable
-add_executable(${PROJECT_NAME}_filter_test src/grasp_filter_test.cpp)
-target_link_libraries(${PROJECT_NAME}_filter_test
-  ${PROJECT_NAME} ${PROJECT_NAME}_filter ${catkin_LIBRARIES} ${Boost_LIBRARIES}
-)
-
 # Action Server executable
 add_executable(${PROJECT_NAME}_server src/simple_grasps_server.cpp)
 add_dependencies(${PROJECT_NAME}_server ${catkin_EXPORTED_TARGETS}) # don't build until necessary msgs are finish
@@ -91,28 +85,37 @@ target_link_libraries(${PROJECT_NAME}_server
   ${PROJECT_NAME} ${catkin_LIBRARIES} ${Boost_LIBRARIES}
 )
 
-# Test executable
+# Test filter executable
+add_executable(${PROJECT_NAME}_filter_test src/grasp_filter_test.cpp)
+target_link_libraries(${PROJECT_NAME}_filter_test
+  ${PROJECT_NAME} ${PROJECT_NAME}_filter ${catkin_LIBRARIES} ${Boost_LIBRARIES}
+)
+
+# Test grasp executable
 add_executable(${PROJECT_NAME}_test src/simple_grasps_test.cpp)
 target_link_libraries(${PROJECT_NAME}_test 
   ${PROJECT_NAME} ${catkin_LIBRARIES} ${Boost_LIBRARIES}
 )
 
-# Install
+## Install
+
+# Install libraries
 install(TARGETS 
   ${PROJECT_NAME} 
   ${PROJECT_NAME}_filter 
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION})
 
-# Mark cpp header files for installation
-install(DIRECTORY include/${PROJECT_NAME}/
-  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-  FILES_MATCHING PATTERN "*.h"
-)
+# Install header files
+install(DIRECTORY include/$PROJECT_NAME}/   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
+
+# Install shared resources
+install(DIRECTORY launch    DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
+install(DIRECTORY resources DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
 
 # Install executables
-install(TARGETS
-  ${PROJECT_NAME}_server 
-#  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+install(TARGETS 
+  ${PROJECT_NAME}_server
+  ${PROJECT_NAME}_test
+  ${PROJECT_NAME}_filter_test
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
-
