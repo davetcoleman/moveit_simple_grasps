@@ -8,7 +8,7 @@
   <arg     if="$(arg debug)" name="launch_prefix" value="gdb --ex run --args" />
 
   <!-- Load the URDF, SRDF and other .yaml configuration files on the param server -->
-  <include file="$(find baxter_moveit_config)/launch/planning_context.launch">
+  <include file="$(find romeo_moveit_config)/launch/planning_context.launch">
     <arg name="load_robot_description" value="true"/>
   </include>
 
@@ -24,8 +24,8 @@
   <node name="grasp_filter_test" launch-prefix="$(arg launch_prefix)" pkg="moveit_simple_grasps" 
 	type="moveit_simple_grasps_filter_test" output="screen" args="$(arg command_args)">
     <param name="arm" value="$(arg arm)"/>
-    <rosparam command="load" file="$(find moveit_simple_grasps)/config/baxter_grasp_data.yaml"/>    
-    <rosparam command="load" file="$(find baxter_moveit_config)/config/kinematics.yaml"/>
+    <rosparam command="load" file="$(find moveit_simple_grasps)/config/romeo_grasp_data.yaml"/>    
+    <rosparam command="load" file="$(find romeo_moveit_config)/config/kinematics.yaml"/>
   </node>
 
 </launch>
