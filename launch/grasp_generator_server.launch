@@ -2,8 +2,14 @@
 
   <arg name="robot" default="reem" />
 
+  <arg name="group"        default="right_arm" />
+  <arg name="end_effector" default="right" />
+
   <!-- Start the test -->
   <node name="moveit_simple_grasps_server" pkg="moveit_simple_grasps" type="moveit_simple_grasps_server" output="screen">
+    <param name="group"        value="$(arg group)"/>
+    <param name="end_effector" value="$(arg end_effector)"/>
+
     <rosparam command="load" file="$(find moveit_simple_grasps)/config/$(arg robot)_grasp_data.yaml"/>
   </node>
 

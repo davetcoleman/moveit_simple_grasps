@@ -33,9 +33,9 @@
  */
 
 /* Author: Bence Magyar
-   Desc:   Action server wrapper for object grasp generator. Currently only works for REEM robot, 
-           needs to be changed to work with yaml configuration file instead.
-*/
+ *         Enrique Fernandez
+ * Desc:   Action server wrapper for object grasp generator.
+ */
 
 // ROS
 #include <ros/ros.h>
@@ -125,21 +125,24 @@ namespace moveit_simple_grasps
     moveit_simple_grasps::GraspData grasp_data_;
 
     // which arm are we using
-    std::string side_;
+    std::string end_effector_name_;
     std::string planning_group_name_;
 
   public:
 
     // Constructor
-    GraspGeneratorServer(const std::string &name, const std::string &side)
+    GraspGeneratorServer(const std::string &name)
       : nh_("~")
       , as_(nh_, name, boost::bind(&moveit_simple_grasps::GraspGeneratorServer::executeCB, this, _1), false)
-      , side_(side)
-      , planning_group_name_(side_+"_arm")
+      , end_effector_name_("end_effector")
+      , planning_group_name_("arm")
     {
       // ---------------------------------------------------------------------------------------------
+      nh_.param("group", planning_group_name_, planning_group_name_);
+      nh_.param("end_effector", end_effector_name_, end_effector_name_);
+
       // Load grasp data specific to our robot
-      if (!grasp_data_.loadRobotGraspData(nh_, side_))
+      if (!grasp_data_.loadRobotGraspData(nh_, end_effector_name_))
         ros::shutdown();
 
       // ---------------------------------------------------------------------------------------------
@@ -192,7 +195,10 @@ namespace moveit_simple_grasps
 int main(int argc, char *argv[])
 {
   ros::init(argc, argv, "grasp_generator_server");
-  moveit_simple_grasps::GraspGeneratorServer grasp_generator_server("generate", "right");
+
+  moveit_simple_grasps::GraspGeneratorServer grasp_generator_server("generate");
+
   ros::spin();
+
   return 0;
 }
