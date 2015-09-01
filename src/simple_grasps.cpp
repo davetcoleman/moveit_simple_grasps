@@ -153,8 +153,11 @@ bool SimpleGrasps::generateAxisGrasps(
 
         break;
       case Z_AXIS:
-        ROS_ERROR_STREAM_NAMED("grasp","Z Axis not implemented!");
-        return false;
+        grasp_pose =
+                Eigen::AngleAxisd(M_PI - theta1, Eigen::Vector3d::UnitZ())
+                *Eigen::AngleAxisd(theta2, Eigen::Vector3d::UnitX()); // Flip 'direction'
+
+            grasp_pose.translation() = Eigen::Vector3d( xb, yb ,zb);
 
         break;
     }
