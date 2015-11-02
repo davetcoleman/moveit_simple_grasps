@@ -1,25 +1,56 @@
-base_link: 'base_link'
+base_link: '/odom'
 
 # =====================================================
 left_hand:
     end_effector_name: 'left_hand'  #ee group name
 
     #actuated joints in end effector
-    joints : ['LHand']
+    joints : ['LHand', 'LWristPitch']
 
     #open position
-    pregrasp_posture : [0.0]
+    #pregrasp_posture : [1.0, 0.0] #for the real robot
+    pregrasp_posture : [0.0, 0.0] #for sim
     pregrasp_time_from_start : 4.0
 
     #close position
-    grasp_posture : [1.0]
+    #grasp_posture : [0.0, 0.0] #for the real robot
+    grasp_posture : [1.0, 0.0] #for sim
     grasp_time_from_start : 4.0
 
     #desired pose from end effector to grasp - [x,y,z]
-    grasp_pose_to_eef : [0.03, 0.0, 0.1]
+    #desired pose from end effector to grasp - [r, p, y] #1.5707 = PI/2
 
-    #desired pose from end effector to grasp - [r, p, y]
-    grasp_pose_to_eef_rotation : [0, 1.5708, 0] # 1.5707 = PI/2
+    #side grasp -pi/2
+    #grasp_pose_to_eef : [-0.12, 0.045, 0.0]
+    #grasp_pose_to_eef_rotation : [-1.5707, 0.0, 0.0]
+    #side grasp -pi/3
+    #grasp_pose_to_eef : [-0.1, 0.055, 0.0]
+    #grasp_pose_to_eef_rotation : [-1.0472, 0.0, 0.0]
+    #side grasp -pi/3 - best
+    grasp_pose_to_eef : [-0.113, 0.036, 0.036]
+    grasp_pose_to_eef_rotation : [-1.032, 0.0, 0.0]
+    #side grasp -pi/4
+    #grasp_pose_to_eef : [-0.1, 0.055, 0.0]
+    #grasp_pose_to_eef_rotation : [-1.025, 0.0, 0.0]
+    #front grasp 
+    #grasp_pose_to_eef : [-0.1, 0.07, -0.05]
+    #grasp_pose_to_eef_rotation : [-0.7854, 0.0, 0.0]
+
+    #top grasp pi/2
+    #grasp_pose_to_eef : [-0.07, 0.0, 0.125]
+    #grasp_pose_to_eef_rotation : [0, 1.5707, 0]
+    #top grasp 0 deg
+    #grasp_pose_to_eef : [-0.095, 0.0, 0.095]
+    #grasp_pose_to_eef_rotation : [0, 0, 0]
+    #top grasp 30 deg
+    #grasp_pose_to_eef : [-0.095, 0.0, 0.11]
+    #grasp_pose_to_eef_rotation : [0, 0.52, 0]
+    #top grasp 35 deg
+    #grasp_pose_to_eef : [-0.055, 0.0, 0.135]
+    #grasp_pose_to_eef_rotation : [0, 0.61, 0]
+    #top grasp 40 deg - best
+    #grasp_pose_to_eef : [-0.03, 0.0, 0.145]
+    #grasp_pose_to_eef_rotation : [0, 0.7, 0]
 
     end_effector_parent_link: 'LWristYaw_link'
 # =====================================================
@@ -27,21 +58,43 @@ right_hand:
     end_effector_name: 'right_hand'  #ee group name
 
     #actuated joints in end effector
-    joints : ['RHand']
+    joints : ['RHand', 'RWristPitch']
 
     #open position
-    pregrasp_posture : [0.0]
+    #pregrasp_posture : [1.0, 0.0] #for the real robot
+    pregrasp_posture : [0.0, 0.0] #for sim
     pregrasp_time_from_start : 4.0
 
     #close position
-    grasp_posture : [1.0]
+    #grasp_posture : [0.0, 0.0] #for the real robot
+    grasp_posture : [1.0, 0.0] #for sim
     grasp_time_from_start : 4.0
 
     #desired pose from end effector to grasp - [x,y,z]
-    grasp_pose_to_eef : [0.03, 0.0, 0.1]
-
     #desired pose from end effector to grasp - [r, p, y]
-    grasp_pose_to_eef_rotation : [0, 1.5708, 0] # 1.5707 = PI/2
+
+    #side grasp pi/2
+    #grasp_pose_to_eef : [-0.12, -0.045, 0.0]
+    #grasp_pose_to_eef_rotation : [1.5707, 0.0, 0.0]
+    #side grasp pi/3
+    #grasp_pose_to_eef : [-0.1, -0.055, 0.0]
+    #grasp_pose_to_eef_rotation : [1.0472, 0.0, 0.0]
+    #side grasp pi/3 - best
+    #grasp_pose_to_eef : [-0.113, -0.036, 0.036]
+    #grasp_pose_to_eef_rotation : [1.032, 0.0, 0.0]
+    #side grasp pi/4
+    #grasp_pose_to_eef : [-0.1, -0.055, 0.0]
+    #grasp_pose_to_eef_rotation : [1.025, 0.0, 0.0]
+    #grasp pi * 2/3
+    #grasp_pose_to_eef : [-0.1, 0.055, 0.0]
+    #grasp_pose_to_eef_rotation : [-2.0944, 0.0, 0.0]
+
+    #top grasp pi/2
+    #grasp_pose_to_eef : [-0.07, 0.0, 0.125]
+    #grasp_pose_to_eef_rotation : [0, 1.5707, 0]
+    #top grasp 40 deg - best
+    grasp_pose_to_eef : [-0.03, 0.0, 0.145]
+    grasp_pose_to_eef_rotation : [0, 0.7, 0]
 
     end_effector_parent_link: 'RWristYaw_link'
 
