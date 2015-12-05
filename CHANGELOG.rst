@@ -2,8 +2,8 @@
 Changelog for package moveit_simple_grasps
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.3.0 (2015-12-05)
+------------------
 * Z Axis implemented
 * Fixed API changes in moveit_visual_tools
 * Adding grasp configurations for Romeo, Nao and Pepper
