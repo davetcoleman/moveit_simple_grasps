@@ -2,6 +2,11 @@
 Changelog for package moveit_simple_grasps
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* catkin lint cleanup
+* Contributors: Dave Coleman
+
 1.3.0 (2015-12-05)
 ------------------
 * Z Axis implemented
