@@ -2,8 +2,8 @@
 Changelog for package moveit_simple_grasps
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.3.1 (2015-12-07)
+------------------
 * catkin lint cleanup
 * Contributors: Dave Coleman
 
