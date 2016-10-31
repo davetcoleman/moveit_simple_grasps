@@ -74,15 +74,15 @@ void createEnvironment(moveit_visual_tools::MoveItVisualToolsPtr visual_tools_)
   // --------------------------------------------------------------------------------------------
   // Add objects to scene
 
-  // Walls                          x,     y,     angle,  width, name
-  visual_tools_->publishCollisionWall(-0.55, 0,     0,      2.2,   WALL1_NAME);  // back wall
-  visual_tools_->publishCollisionWall(0.05,  -1.1,  M_PI/2, 2.0,   WALL2_NAME);  // baxter's right
-  visual_tools_->publishCollisionWall(0.05,  1.1,   M_PI/2, 2.0,   WALL3_NAME);  // baxter's left
+  // Walls                            x,     y,     angle,  width, height, name
+  visual_tools_->publishCollisionWall(-0.55, 0,     0,      2.2,   1.5,    WALL1_NAME);  // back wall
+  visual_tools_->publishCollisionWall(0.05,  -1.1,  M_PI/2, 2.0,   1.5,    WALL2_NAME);  // baxter's right
+  visual_tools_->publishCollisionWall(0.05,  1.1,   M_PI/2, 2.0,   1.5,    WALL3_NAME);  // baxter's left
 
-  // Tables                          x,       y,       angle, width,       height,       depth,       name
-  visual_tools_->publishCollisionTable(0.78,    -0.8,    0,     0.4,         1.4,          0.47,        SUPPORT_SURFACE1_NAME); // computer monitor
-  visual_tools_->publishCollisionTable(0.78,    -0.45,   0,     0.4,         0.7,          0.47,        SUPPORT_SURFACE2_NAME); // my desk
-  visual_tools_->publishCollisionTable(TABLE_X, TABLE_Y, 0,     TABLE_WIDTH, TABLE_HEIGHT, TABLE_DEPTH, SUPPORT_SURFACE3_NAME); // andy table
+  // Tables                            x,       y,       z, angle, width,       height,       depth,       name
+  visual_tools_->publishCollisionTable(0.78,    -0.8,    0, 0,     0.4,         1.4,          0.47,        SUPPORT_SURFACE1_NAME); // computer monitor
+  visual_tools_->publishCollisionTable(0.78,    -0.45,   0, 0,     0.4,         0.7,          0.47,        SUPPORT_SURFACE2_NAME); // my desk
+  visual_tools_->publishCollisionTable(TABLE_X, TABLE_Y, 0, 0,     TABLE_WIDTH, TABLE_HEIGHT, TABLE_DEPTH, SUPPORT_SURFACE3_NAME); // andy table
 }
 
 double getTableHeight(double floor_offset)
