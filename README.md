@@ -1,10 +1,10 @@
 # SUPPORT FOR THIS PACKAGE HAS ENDED
-Sorry, too many things to maintain. Use at your own risk, without support.
+Sorry, too many things to maintain. I'll still merge PRs and am happy to share maintainership of this package with someone interested.
 
 MoveIt! Simple Grasps
 ====================
 
-A basic grasp generator for simple objects such as blocks or cylinders for use with the MoveIt! pick and place pipeline. Does not consider friction cones or other dynamics. 
+A basic grasp generator for simple objects such as blocks or cylinders for use with the MoveIt! pick and place pipeline. Does not consider friction cones or other dynamics.
 
 Its current implementation simple takes as input a pose vector (postition and orientation) and generates a large number of potential grasp approaches and directions. Also includes a grasp filter for removing kinematically infeasible grasps via threaded IK solvers.
 
@@ -17,13 +17,13 @@ This package includes:
 
 Developed by [Dave Coleman](http://dav.ee) at the Correll Robotics Lab, University of Colorado Boulder with outside contributors.
 
-<img align="right" src="https://raw.github.com/davetcoleman/moveit_simple_grasps/hydro-devel/resources/demo.png" /> 
+<img align="right" src="https://raw.github.com/davetcoleman/moveit_simple_grasps/hydro-devel/resources/demo.png" />
 
 ## Video Demo
 
 A simple demo with Baxter:
 
-[![Baxter Grasp Test](http://img.youtube.com/vi/WEDITCR2qH4/0.jpg)](https://www.youtube.com/watch?v=WEDITCR2qH4)  
+[![Baxter Grasp Test](http://img.youtube.com/vi/WEDITCR2qH4/0.jpg)](https://www.youtube.com/watch?v=WEDITCR2qH4)
 
 ## Build Status
 
@@ -57,7 +57,7 @@ rosdep install --from-paths src --ignore-src --rosdistro indigo
 
 ## Robot-Agnostic Configuration
 
-You will first need a configuration file that described your robot's end effector geometry. Currently an example format can be seen in this repository at [config/baxter_grasp_data.yaml](https://github.com/davetcoleman/moveit_simple_grasps/blob/hydro-devel/config/baxter_grasp_data.yaml). See the comments within that file for explanations. 
+You will first need a configuration file that described your robot's end effector geometry. Currently an example format can be seen in this repository at [config/baxter_grasp_data.yaml](https://github.com/davetcoleman/moveit_simple_grasps/blob/hydro-devel/config/baxter_grasp_data.yaml). See the comments within that file for explanations.
 
 To load that file at launch, you copy the example in the file [launch/grasp_test.launch](https://github.com/davetcoleman/moveit_simple_grasps/blob/hydro-devel/launch/grasp_test.launch) where you should see the line ``<rosparam command="load" file="$(find moveit_simple_grasps)/config/baxter_grasp_data.yaml"/>``.
 
@@ -187,7 +187,7 @@ roslaunch moveit_simple_grasps grasp_test_rviz.launch
 
 To test just grasp generation for randomly placed blocks:
 ```
-roslaunch moveit_simple_grasps grasp_test.launch 
+roslaunch moveit_simple_grasps grasp_test.launch
 ```
 
 To also test the IK grasp filtering:
