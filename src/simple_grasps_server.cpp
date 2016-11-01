@@ -146,7 +146,8 @@ namespace moveit_simple_grasps
       // Load the Robot Viz Tools for publishing to Rviz
       visual_tools_.reset(new moveit_visual_tools::MoveItVisualTools(grasp_data_.base_link_));
       visual_tools_->setLifetime(120.0);
-      visual_tools_->loadEEMarker(grasp_data_.ee_group_);
+      const robot_model::JointModelGroup* ee_jmg = visual_tools_->getRobotModel()->getJointModelGroup(grasp_data_.ee_group_);
+      visual_tools_->loadEEMarker(ee_jmg);
 
       // ---------------------------------------------------------------------------------------------
       // Load grasp generator

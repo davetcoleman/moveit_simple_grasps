@@ -112,14 +112,14 @@ public:
     {
       // Test visualization of end effector in OPEN position
       grasp_data_.setRobotStatePreGrasp( visual_tools_->getSharedRobotState() );
-      visual_tools_->loadEEMarker(grasp_data_.ee_group_);
       const robot_model::JointModelGroup* ee_jmg = visual_tools_->getRobotModel()->getJointModelGroup(grasp_data_.ee_group_);
+      visual_tools_->loadEEMarker(ee_jmg);
       visual_tools_->publishEEMarkers(pose, ee_jmg, rviz_visual_tools::ORANGE, "test_eef");
       ros::Duration(1.0).sleep();
 
       // Test visualization of end effector in CLOSED position
       grasp_data_.setRobotStateGrasp( visual_tools_->getSharedRobotState() );
-      visual_tools_->loadEEMarker(grasp_data_.ee_group_);
+      visual_tools_->loadEEMarker(ee_jmg);
       visual_tools_->publishEEMarkers(pose, ee_jmg, rviz_visual_tools::GREEN, "test_eef");
       ros::Duration(1.0).sleep();
     }
@@ -142,12 +142,12 @@ public:
         generateRandomObject(object_pose);
 
       // Show the block
-      visual_tools_->publishBlock(object_pose, rviz_visual_tools::BLUE, BLOCK_SIZE);
+      visual_tools_->publishCuboid(object_pose, BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE, rviz_visual_tools::BLUE);
 
       possible_grasps.clear();
 
       // Generate set of grasps for one object
-      simple_grasps_->generateBlockGrasps( object_pose, grasp_data_, possible_grasps);
+      simple_grasps_->generateBlockGrasps(object_pose, grasp_data_, possible_grasps);
 
       // Visualize them
       const robot_model::JointModelGroup* ee_jmg = visual_tools_->getRobotModel()->getJointModelGroup(grasp_data_.ee_group_);

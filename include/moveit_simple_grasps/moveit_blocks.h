@@ -186,7 +186,7 @@ public:
             ROS_INFO_STREAM_NAMED("pick_place","Picking '" << blocks[block_id].name << "'");
 
             // Visualize the block we are about to pick
-            visual_tools_->publishBlock( blocks[block_id].start_pose, rviz_visual_tools::BLUE, BLOCK_SIZE);
+            visual_tools_->publishCuboid(blocks[block_id].start_pose, BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE, rviz_visual_tools::BLUE);
 
             if( !pick(blocks[block_id].start_pose, blocks[block_id].name) )
             {
@@ -212,7 +212,7 @@ public:
             ROS_INFO_STREAM_NAMED("pick_place","Placing '" << blocks[block_id].name << "'");
 
             // Publish goal block location
-            visual_tools_->publishBlock( blocks[block_id].goal_pose, rviz_visual_tools::BLUE, BLOCK_SIZE);
+            visual_tools_->publishCuboid(blocks[block_id].goal_pose, BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE, rviz_visual_tools::BLUE);
 
             if( !place(blocks[block_id].goal_pose, blocks[block_id].name) )
             {
@@ -363,7 +363,7 @@ public:
 
       place_loc.place_pose = pose_stamped;
 
-      visual_tools_->publishBlock( place_loc.place_pose.pose, rviz_visual_tools::BLUE, BLOCK_SIZE);
+      visual_tools_->publishCuboid(place_loc.place_pose.pose, BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE, rviz_visual_tools::BLUE);
 
       // Approach
       moveit_msgs::GripperTranslation pre_place_approach;

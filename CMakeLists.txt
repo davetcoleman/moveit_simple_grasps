@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(moveit_simple_grasps)
 
+set_directory_properties(PROPERTIES COMPILE_OPTIONS "-std=c++11")
+
 # Load catkin and all dependencies required for this package
 find_package(catkin REQUIRED COMPONENTS
   roscpp
